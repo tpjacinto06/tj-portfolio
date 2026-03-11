@@ -84,11 +84,11 @@ export default function Portfolio() {
       year: "2025",
       category: "independent",
       type: "911-collection",
-      image: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&q=80",
+      image: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773269837/Gemini_Generated_Image_oev627oev627oev6_iazi3t.png",
       processImages: [
-        "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&q=80",
-        "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&q=80",
-        "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&q=80"
+        "https://res.cloudinary.com/dbey0lqda/image/upload/v1773269837/Gemini_Generated_Image_oev627oev627oev6_iazi3t.png",
+        "https://res.cloudinary.com/dbey0lqda/image/upload/v1773269837/Gemini_Generated_Image_oev627oev627oev6_iazi3t.png",
+        "https://res.cloudinary.com/dbey0lqda/image/upload/v1773269837/Gemini_Generated_Image_oev627oev627oev6_iazi3t.png"
       ],
       productTitles: ["CHARGING CABLE HOLDER", "KEYCHAIN", "PAPERWEIGHT"]
     },
@@ -125,7 +125,7 @@ export default function Portfolio() {
       year: "2023",
       category: "marketing",
       type: "social-media",
-      image: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773245572/LOGO_NORAL.png_k6ejc1.png",
+      image: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773251449/LOGO_WHITE.png_jcomck.png",
       profileImage: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773245580/WhatsApp_Image_2026-03-11_at_16.11.35_yypozc.jpg",
       descriptionText: "I helped build the digital presence of Sophie Real Estate Portugal, developing and managing its social media platforms while running both paid and organic marketing campaigns. Through targeted content and advertising strategies, the campaigns generated over 400 qualified leads, helping connect potential buyers with the agency's properties.",
       buttonText: "SOPHIE REAL ESTATE",
@@ -139,7 +139,7 @@ export default function Portfolio() {
       year: "2023",
       category: "marketing",
       type: "social-media",
-      image: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773241438/Screenshot_2026-03-10_213436_drok0m.png",
+      image: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773269849/Design_sem_nome_4_eblzoz.png",
       profileImage: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773241438/Screenshot_2026-03-10_213514_za5lg1.png",
       descriptionText: "I designed and developed a website as part of a campaign targeting Golden Visa investors interested in Portugal. The platform was created to showcase the services offered by Sophie Real Estate as a trusted partner for property acquisitions, presenting investment opportunities and guiding international buyers through the process of purchasing real estate in Portugal.",
       buttonText: "SOPHIE REAL ESTATE",
@@ -408,7 +408,7 @@ export default function Portfolio() {
                 BACK
               </button>
               <div className="text-sm tracking-[0.3em] font-light">
-                {selectedProduct.screenshotAspect === "square" ? "WEBSITE" : "SOCIAL MEDIA"}
+                {selectedProduct.screenshotAspect === "video" ? "MARKETING CAMPAIGN" : selectedProduct.screenshotAspect === "square" ? "WEBSITE" : "SOCIAL MEDIA"}
               </div>
               <div className="w-16"></div>
             </div>
@@ -439,37 +439,38 @@ export default function Portfolio() {
             )}
           </section>
 
-          {/* Button Section */}
-          <section className="bg-white py-24 px-8 md:px-16 flex items-center justify-center min-h-screen">
+          {/* Screenshot Section - clickable image, hidden for video aspect (Golden Visa) */}
+          {selectedProduct.screenshotAspect !== "video" && (
+            <section className="bg-white py-24 px-8 md:px-16 flex items-center justify-center min-h-screen">
+              <div className="max-w-md mx-auto">
+                <button 
+                  onClick={() => window.open(selectedProduct.buttonLink, '_blank')}
+                  className="block hover:opacity-70 transition-opacity cursor-pointer"
+                >
+                  <div className={`${aspectRatio} bg-neutral-50 overflow-hidden`}>
+                    <img 
+                      src={selectedProduct.profileImage} 
+                      alt="Screenshot"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </button>
+              </div>
+            </section>
+          )}
+
+          {/* Description Section at Bottom */}
+          <section id={'social-description-section-' + selectedProduct.id} className="bg-white pb-24 px-8 md:px-16 flex items-center justify-center min-h-screen">
             <div className="max-w-2xl mx-auto text-center">
+              <p className="text-sm leading-relaxed font-light text-neutral-600 mb-12">
+                {selectedProduct.descriptionText}
+              </p>
               <button
                 onClick={() => window.open(selectedProduct.buttonLink, '_blank')}
                 className="text-base md:text-2xl tracking-[0.15em] font-light hover:opacity-50 transition-opacity"
               >
                 {selectedProduct.buttonText}
               </button>
-            </div>
-          </section>
-
-          {/* Screenshot Section */}
-          <section className="bg-white py-24 px-8 md:px-16">
-            <div className="max-w-md mx-auto">
-              <div className={`${aspectRatio} bg-neutral-50 overflow-hidden`}>
-                <img 
-                  src={selectedProduct.profileImage} 
-                  alt="Screenshot"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
-          </section>
-
-          {/* Description Section at Bottom */}
-          <section id={'social-description-section-' + selectedProduct.id} className="bg-white pb-24 px-8 md:px-16">
-            <div className="max-w-2xl mx-auto">
-              <p className="text-sm leading-relaxed font-light text-neutral-600">
-                {selectedProduct.descriptionText}
-              </p>
             </div>
           </section>
         </div>
