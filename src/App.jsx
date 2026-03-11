@@ -520,7 +520,7 @@ export default function Portfolio() {
             
             {showArrow && (
               <button 
-                onClick={scrollToBottom}
+                onClick={scrollToProduct1}
                 className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer hover:opacity-70 transition-opacity"
               >
                 <svg 
