@@ -72,7 +72,7 @@ export default function Portfolio() {
       image: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773246602/WhatsApp_Image_2026-03-11_at_16.20.49_1_t63yax.jpg",
       processImages: [
         "https://res.cloudinary.com/dbey0lqda/image/upload/v1773246587/WhatsApp_Image_2026-03-11_at_16.28.14_qerqma.jpg",
-        "https://res.cloudinary.com/dbey0lqda/image/upload/v1773246587/WhatsApp_Image_2026-03-11_at_16.28.14_qerqma.jpg",
+        "https://res.cloudinary.com/dbey0lqda/image/upload/v1773246586/WhatsApp_Image_2026-03-11_at_16.28.01_wpotbw.jpg",
         "https://res.cloudinary.com/dbey0lqda/image/upload/v1773246602/WhatsApp_Image_2026-03-11_at_16.20.49_1_t63yax.jpg"
       ],
       process: "STAGE 1 – ENGINEERING CHALLENGE\nThe sprung Trebuchet project is a variation of the Design Sprint which was first used in Google Corporation for innovations and product development. It is a time-constrained, multi-disciplinary, five-phased process that reduces the risks associated with launching a new product, service, or features of an existing product/service.\n\nSTAGE 2 – CONCEPT SKETCHES\n\nSTAGE 3 – MANUFACTURING"
@@ -125,8 +125,8 @@ export default function Portfolio() {
       year: "2023",
       category: "marketing",
       type: "social-media",
-      image: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773245807/Picture12_nxep9y.jpg",
-      profileImage: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773245807/Picture12_nxep9y.jpg",
+      image: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773245572/LOGO_NORAL.png_k6ejc1.png",
+      profileImage: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773245580/WhatsApp_Image_2026-03-11_at_16.11.35_yypozc.jpg",
       descriptionText: "I helped build the digital presence of Sophie Real Estate Portugal, developing and managing its social media platforms while running both paid and organic marketing campaigns. Through targeted content and advertising strategies, the campaigns generated over 400 qualified leads, helping connect potential buyers with the agency's properties.",
       buttonText: "SOPHIE REAL ESTATE",
       buttonLink: "https://www.instagram.com/sophierealestate",
@@ -785,7 +785,7 @@ export default function Portfolio() {
   }
 
   return (
-    <div className="min-h-screen bg-white" style={{ fontFamily: "'Inter', sans-serif" }}>
+    <div className="min-h-screen bg-white overflow-hidden" style={{ fontFamily: "'Inter', sans-serif" }}>
       {/* Show homepage with category selection */}
       {selectedCategory === 'all' ? (
         <>
@@ -797,8 +797,8 @@ export default function Portfolio() {
           </nav>
 
           {/* Centered Category Menu */}
-          <main className="min-h-screen flex items-center justify-center px-8 py-32">
-            <div className="flex flex-col items-center justify-center space-y-8 flex-1">
+          <main className="h-screen flex items-center justify-center px-8 overflow-hidden">
+            <div className="flex flex-col items-center justify-center space-y-6 md:space-y-8">
               {categories.filter(c => c.id !== 'all').map(cat => (
                 <button
                   key={cat.id}
@@ -810,7 +810,7 @@ export default function Portfolio() {
               ))}
               
               {/* Divider */}
-              <div className="w-px h-8 bg-neutral-200"></div>
+              <div className="w-px h-6 md:h-8 bg-neutral-200"></div>
               
               {/* About and Inquire buttons */}
               <button
