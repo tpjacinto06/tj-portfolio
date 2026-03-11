@@ -334,14 +334,14 @@ export default function Portfolio() {
             {showArrow && (
               <button 
                 onClick={scrollToBottom}
-                className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer hover:opacity-70 transition-opacity bg-black rounded-full p-4 shadow-lg"
+                className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer hover:opacity-70 transition-opacity"
               >
                 <svg 
                   width="24" 
                   height="40" 
                   viewBox="0 0 24 40" 
                   fill="none" 
-                  stroke="white" 
+                  stroke="black" 
                   strokeWidth="1.5"
                 >
                   <path d="M12 0 L12 36 M12 36 L6 30 M12 36 L18 30" />
@@ -423,14 +423,14 @@ export default function Portfolio() {
             {showArrow && (
               <button 
                 onClick={scrollToBottom}
-                className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer hover:opacity-70 transition-opacity bg-black rounded-full p-4 shadow-lg"
+                className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer hover:opacity-70 transition-opacity"
               >
                 <svg 
                   width="24" 
                   height="40" 
                   viewBox="0 0 24 40" 
                   fill="none" 
-                  stroke="white" 
+                  stroke="black" 
                   strokeWidth="1.5"
                 >
                   <path d="M12 0 L12 36 M12 36 L6 30 M12 36 L18 30" />
@@ -521,14 +521,14 @@ export default function Portfolio() {
             {showArrow && (
               <button 
                 onClick={scrollToBottom}
-                className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer hover:opacity-70 transition-opacity bg-black rounded-full p-4 shadow-lg"
+                className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer hover:opacity-70 transition-opacity"
               >
                 <svg 
                   width="24" 
                   height="40" 
                   viewBox="0 0 24 40" 
                   fill="none" 
-                  stroke="white" 
+                  stroke="black" 
                   strokeWidth="1.5"
                 >
                   <path d="M12 0 L12 36 M12 36 L6 30 M12 36 L18 30" />
@@ -641,14 +641,14 @@ export default function Portfolio() {
           {showArrow && (
             <button 
               onClick={scrollToStage1}
-              className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer hover:opacity-70 transition-opacity bg-black rounded-full p-4 shadow-lg"
+              className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer hover:opacity-70 transition-opacity"
             >
               <svg 
                 width="24" 
                 height="40" 
                 viewBox="0 0 24 40" 
                 fill="none" 
-                stroke="white" 
+                stroke="black" 
                 strokeWidth="1.5"
               >
                 <path d="M12 0 L12 36 M12 36 L6 30 M12 36 L18 30" />
@@ -668,7 +668,7 @@ export default function Portfolio() {
                 </h2>
               </div>
               
-              <div className="aspect-video bg-neutral-50 overflow-hidden mb-8 md:max-w-3xl md:mx-auto">
+              <div className="aspect-video bg-neutral-50 overflow-hidden mb-8 md:max-w-2xl md:mx-auto">
                 <img 
                   src={selectedProduct.processImages[2]} 
                   alt="Stage 3"
@@ -702,7 +702,7 @@ export default function Portfolio() {
                 </h2>
               </div>
               
-              <div className="aspect-video bg-neutral-50 overflow-hidden mb-8 md:max-w-3xl md:mx-auto">
+              <div className="aspect-video bg-neutral-50 overflow-hidden mb-8 md:max-w-2xl md:mx-auto">
                 <img 
                   src={selectedProduct.processImages[1]} 
                   alt="Stage 2"
@@ -736,7 +736,7 @@ export default function Portfolio() {
                 </h2>
               </div>
               
-              <div className="aspect-video bg-neutral-50 overflow-hidden mb-8 md:max-w-3xl md:mx-auto">
+              <div className="aspect-video bg-neutral-50 overflow-hidden mb-8 md:max-w-2xl md:mx-auto">
                 <img 
                   src={selectedProduct.processImages[0]} 
                   alt="Stage 1"
@@ -769,7 +769,7 @@ export default function Portfolio() {
   }
 
   return (
-    <div className="h-screen bg-white overflow-hidden" style={{ fontFamily: "'Inter', sans-serif" }}>
+    <div className="min-h-screen bg-white" style={{ fontFamily: "'Inter', sans-serif" }}>
       {/* Show homepage with category selection */}
       {selectedCategory === 'all' ? (
         <div className="h-screen flex flex-col overflow-hidden">
