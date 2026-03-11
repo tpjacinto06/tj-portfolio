@@ -144,7 +144,7 @@ export default function Portfolio() {
       descriptionText: "I designed and developed a website as part of a campaign targeting Golden Visa investors interested in Portugal. The platform was created to showcase the services offered by Sophie Real Estate as a trusted partner for property acquisitions, presenting investment opportunities and guiding international buyers through the process of purchasing real estate in Portugal.",
       buttonText: "SOPHIE REAL ESTATE",
       buttonLink: "https://www.sophierealestate.com/golden-visa",
-      screenshotAspect: "square"
+      screenshotAspect: "video"
     }
   ];
 
@@ -326,27 +326,23 @@ export default function Portfolio() {
           </nav>
 
           {/* Hero Image */}
-          <section className="h-screen relative flex items-center justify-center">
-            <div className="absolute inset-0 bg-neutral-50">
-              <img 
-                src={selectedProduct.image} 
-                alt={selectedProduct.name}
-                className="w-full h-full object-cover"
-              />
-            </div>
+          <section className="h-screen relative flex items-center justify-center bg-white">
+            <h1 className="text-3xl md:text-5xl lg:text-6xl tracking-[0.2em] font-light text-center px-8 max-w-4xl">
+              {selectedProduct.name.toUpperCase()}
+            </h1>
             
             {showArrow && (
               <button 
                 onClick={scrollToBottom}
-                className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer hover:opacity-70 transition-opacity bg-white rounded-full p-4 shadow-lg"
+                className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer hover:opacity-70 transition-opacity bg-black rounded-full p-4 shadow-lg"
               >
                 <svg 
                   width="24" 
                   height="40" 
                   viewBox="0 0 24 40" 
                   fill="none" 
-                  stroke="black" 
-                  strokeWidth="1"
+                  stroke="white" 
+                  strokeWidth="1.5"
                 >
                   <path d="M12 0 L12 36 M12 36 L6 30 M12 36 L18 30" />
                 </svg>
@@ -394,7 +390,7 @@ export default function Portfolio() {
         }
       };
 
-      const aspectRatio = selectedProduct.screenshotAspect === "square" ? "aspect-square" : "aspect-[9/16]";
+      const aspectRatio = selectedProduct.screenshotAspect === "square" ? "aspect-square" : selectedProduct.screenshotAspect === "video" ? "aspect-video" : "aspect-[9/16]";
 
       return (
         <div className="min-h-screen bg-white" style={{ fontFamily: "'Inter', sans-serif" }}>
@@ -419,27 +415,23 @@ export default function Portfolio() {
           </nav>
 
           {/* Hero Image */}
-          <section className="h-screen relative flex items-center justify-center">
-            <div className="absolute inset-0 bg-neutral-50">
-              <img 
-                src={selectedProduct.image} 
-                alt={selectedProduct.name}
-                className="w-full h-full object-cover"
-              />
-            </div>
+          <section className="h-screen relative flex items-center justify-center bg-white">
+            <h1 className="text-3xl md:text-5xl lg:text-6xl tracking-[0.2em] font-light text-center px-8 max-w-4xl">
+              {selectedProduct.name.toUpperCase()}
+            </h1>
             
             {showArrow && (
               <button 
                 onClick={scrollToBottom}
-                className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer hover:opacity-70 transition-opacity bg-white rounded-full p-4 shadow-lg"
+                className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer hover:opacity-70 transition-opacity bg-black rounded-full p-4 shadow-lg"
               >
                 <svg 
                   width="24" 
                   height="40" 
                   viewBox="0 0 24 40" 
                   fill="none" 
-                  stroke="black" 
-                  strokeWidth="1"
+                  stroke="white" 
+                  strokeWidth="1.5"
                 >
                   <path d="M12 0 L12 36 M12 36 L6 30 M12 36 L18 30" />
                 </svg>
@@ -521,27 +513,23 @@ export default function Portfolio() {
           </nav>
 
           {/* Hero Image */}
-          <section className="h-screen relative flex items-center justify-center">
-            <div className="absolute inset-0 bg-neutral-50">
-              <img 
-                src={selectedProduct.image} 
-                alt={selectedProduct.name}
-                className="w-full h-full object-cover"
-              />
-            </div>
+          <section className="h-screen relative flex items-center justify-center bg-white">
+            <h1 className="text-3xl md:text-5xl lg:text-6xl tracking-[0.2em] font-light text-center px-8 max-w-4xl">
+              {selectedProduct.name.toUpperCase()}
+            </h1>
             
             {showArrow && (
               <button 
-                onClick={scrollToProduct1}
-                className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer hover:opacity-70 transition-opacity bg-white rounded-full p-4 shadow-lg"
+                onClick={scrollToBottom}
+                className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer hover:opacity-70 transition-opacity bg-black rounded-full p-4 shadow-lg"
               >
                 <svg 
                   width="24" 
                   height="40" 
                   viewBox="0 0 24 40" 
                   fill="none" 
-                  stroke="black" 
-                  strokeWidth="1"
+                  stroke="white" 
+                  strokeWidth="1.5"
                 >
                   <path d="M12 0 L12 36 M12 36 L6 30 M12 36 L18 30" />
                 </svg>
@@ -645,27 +633,23 @@ export default function Portfolio() {
           </div>
         </nav>
 
-        <section className="h-screen relative flex items-center justify-center">
-          <div className="absolute inset-0 bg-neutral-50">
-            <img 
-              src={selectedProduct.image} 
-              alt={selectedProduct.name}
-              className="w-full h-full object-cover"
-            />
-          </div>
+        <section className="h-screen relative flex items-center justify-center bg-white">
+          <h1 className="text-3xl md:text-5xl lg:text-6xl tracking-[0.2em] font-light text-center px-8 max-w-4xl">
+            {selectedProduct.name.toUpperCase()}
+          </h1>
           
           {showArrow && (
             <button 
               onClick={scrollToStage1}
-              className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer hover:opacity-70 transition-opacity bg-white rounded-full p-4 shadow-lg"
+              className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer hover:opacity-70 transition-opacity bg-black rounded-full p-4 shadow-lg"
             >
               <svg 
                 width="24" 
                 height="40" 
                 viewBox="0 0 24 40" 
                 fill="none" 
-                stroke="black" 
-                strokeWidth="1"
+                stroke="white" 
+                strokeWidth="1.5"
               >
                 <path d="M12 0 L12 36 M12 36 L6 30 M12 36 L18 30" />
               </svg>
@@ -684,7 +668,7 @@ export default function Portfolio() {
                 </h2>
               </div>
               
-              <div className="aspect-video bg-neutral-50 overflow-hidden mb-8">
+              <div className="aspect-video bg-neutral-50 overflow-hidden mb-8 md:max-w-3xl md:mx-auto">
                 <img 
                   src={selectedProduct.processImages[2]} 
                   alt="Stage 3"
@@ -718,7 +702,7 @@ export default function Portfolio() {
                 </h2>
               </div>
               
-              <div className="aspect-video bg-neutral-50 overflow-hidden mb-8">
+              <div className="aspect-video bg-neutral-50 overflow-hidden mb-8 md:max-w-3xl md:mx-auto">
                 <img 
                   src={selectedProduct.processImages[1]} 
                   alt="Stage 2"
@@ -752,7 +736,7 @@ export default function Portfolio() {
                 </h2>
               </div>
               
-              <div className="aspect-video bg-neutral-50 overflow-hidden mb-8">
+              <div className="aspect-video bg-neutral-50 overflow-hidden mb-8 md:max-w-3xl md:mx-auto">
                 <img 
                   src={selectedProduct.processImages[0]} 
                   alt="Stage 1"
@@ -785,19 +769,19 @@ export default function Portfolio() {
   }
 
   return (
-    <div className="min-h-screen bg-white overflow-hidden" style={{ fontFamily: "'Inter', sans-serif" }}>
+    <div className="h-screen bg-white overflow-hidden" style={{ fontFamily: "'Inter', sans-serif" }}>
       {/* Show homepage with category selection */}
       {selectedCategory === 'all' ? (
-        <>
+        <div className="h-screen flex flex-col overflow-hidden">
           {/* Minimal Navigation - Homepage */}
-          <nav className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50">
+          <nav className="flex-shrink-0 w-full bg-white/80 backdrop-blur-md z-50 border-b border-black/5">
             <div className="max-w-screen-2xl mx-auto px-8 md:px-16 py-6 flex items-center justify-center">
               <div className="text-sm tracking-[0.3em] font-light">TJ</div>
             </div>
           </nav>
 
           {/* Centered Category Menu */}
-          <main className="h-screen flex items-center justify-center px-8 overflow-hidden">
+          <main className="flex-1 flex items-center justify-center px-8 overflow-hidden">
             <div className="flex flex-col items-center justify-center space-y-6 md:space-y-8">
               {categories.filter(c => c.id !== 'all').map(cat => (
                 <button
@@ -829,7 +813,7 @@ export default function Portfolio() {
           </main>
 
           {/* Minimal Footer */}
-          <footer className="fixed bottom-0 w-full border-t border-black/5 py-8 px-8 md:px-16 bg-white/80 backdrop-blur-md">
+          <footer className="flex-shrink-0 w-full border-t border-black/5 py-6 md:py-8 px-8 md:px-16 bg-white/80 backdrop-blur-md">
             <div className="max-w-screen-2xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
               <p className="text-xs tracking-[0.2em] font-light text-neutral-400">
                 TJ © 2026
@@ -844,7 +828,7 @@ export default function Portfolio() {
               </div>
             </div>
           </footer>
-        </>
+        </div>
       ) : (
         <>
           {/* Category Page Navigation */}
