@@ -8,15 +8,15 @@ export default function Portfolio() {
   const [showArrow, setShowArrow] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('all');
 
-  // Load Libre Baskerville font
+  // Load Inter font
   useEffect(() => {
     const link = document.createElement('link');
-    link.href = 'https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap';
+    link.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap';
     link.rel = 'stylesheet';
     document.head.appendChild(link);
     
     // Apply font to body
-    document.body.style.fontFamily = "'Libre Baskerville', serif";
+    document.body.style.fontFamily = "'Inter', sans-serif";
     
     return () => {
       document.head.removeChild(link);
@@ -41,9 +41,9 @@ export default function Portfolio() {
       type: "standard",
       image: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773241437/18e65f4d-f910-4e4b-8dc2-91b2802d99d8_yrdiuv.png",
       processImages: [
-        "https://images.unsplash.com/photo-1581094271901-8022df4466f9?w=800&q=80",
-        "https://images.unsplash.com/photo-1581094271901-8022df4466f9?w=800&q=80",
-        "https://images.unsplash.com/photo-1581094271901-8022df4466f9?w=800&q=80"
+        "https://res.cloudinary.com/dbey0lqda/image/upload/v1773241437/Picture4_leuekm.png",
+        "https://res.cloudinary.com/dbey0lqda/image/upload/v1773241437/Picture1_j9cgag.jpg",
+        "https://res.cloudinary.com/dbey0lqda/image/upload/v1773241437/Picture3_owbwso.png"
       ],
       process: "STAGE 1 – ENGINEERING CHALLENGE\nRedesign the toting mechanism used to clean high precision parts manufactured by Renishaw.\n\nSTAGE 2 – CONCEPT DESIGN & MATERIAL SELECTION\nRedesign toting system to fit the dimension requirements whilst improving overall structural strength and chemical resistance.\n\nSTAGE 3 – EMBODIMENT DESIGN\nFinal design."
     },
@@ -54,11 +54,11 @@ export default function Portfolio() {
       year: "2025",
       category: "engineering",
       type: "standard",
-      image: "https://images.unsplash.com/photo-1587293852726-70cdb56c2866?w=800&q=80",
+      image: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773245807/Picture12_nxep9y.jpg",
       processImages: [
-        "https://images.unsplash.com/photo-1587293852726-70cdb56c2866?w=800&q=80",
-        "https://images.unsplash.com/photo-1587293852726-70cdb56c2866?w=800&q=80",
-        "https://images.unsplash.com/photo-1587293852726-70cdb56c2866?w=800&q=80"
+        "https://res.cloudinary.com/dbey0lqda/image/upload/v1773241437/Monorail_Straddle_Beam_Design-1_1_funram.jpg",
+        "https://res.cloudinary.com/dbey0lqda/image/upload/v1773245806/Picture24_cnyg7t.jpg",
+        "https://res.cloudinary.com/dbey0lqda/image/upload/v1773246146/WhatsApp_Image_2026-03-11_at_16.20.49_r5dnrr.jpg"
       ],
       process: "STAGE 1 – ENGINEERING CHALLENGE\n1. Investigate the feasibility of a sustainable monorail system for university transportation.\n2. Design and manufacture a model bridge to enable this method of transportation.\n\nSTAGE 2 – DESIGN SELECTION\nInspired by truss bridge designs, decreasing overall weight and material and construction cost whilst maintaining the same structural rigidity.\n\nSTAGE 3 – MANUFACTURING AND TESTS\nUsing CAD software to create a bridge design from a single sheet of aluminium which is water cut."
     },
@@ -69,11 +69,11 @@ export default function Portfolio() {
       year: "2025",
       category: "engineering",
       type: "standard",
-      image: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=800&q=80",
+      image: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773246602/WhatsApp_Image_2026-03-11_at_16.20.49_1_t63yax.jpg",
       processImages: [
-        "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=800&q=80",
-        "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=800&q=80",
-        "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=800&q=80"
+        "https://res.cloudinary.com/dbey0lqda/image/upload/v1773246587/WhatsApp_Image_2026-03-11_at_16.28.14_qerqma.jpg",
+        "https://res.cloudinary.com/dbey0lqda/image/upload/v1773246587/WhatsApp_Image_2026-03-11_at_16.28.14_qerqma.jpg",
+        "https://res.cloudinary.com/dbey0lqda/image/upload/v1773246602/WhatsApp_Image_2026-03-11_at_16.20.49_1_t63yax.jpg"
       ],
       process: "STAGE 1 – ENGINEERING CHALLENGE\nThe sprung Trebuchet project is a variation of the Design Sprint which was first used in Google Corporation for innovations and product development. It is a time-constrained, multi-disciplinary, five-phased process that reduces the risks associated with launching a new product, service, or features of an existing product/service.\n\nSTAGE 2 – CONCEPT SKETCHES\n\nSTAGE 3 – MANUFACTURING"
     },
@@ -111,8 +111,8 @@ export default function Portfolio() {
       year: "2023",
       category: "independent",
       type: "social-media",
-      image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80",
-      profileImage: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80",
+      image: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773241470/WhatsApp_Image_2026-03-10_at_21.33.06_uthpac.jpg",
+      profileImage: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773241460/WhatsApp_Image_2026-03-10_at_21.33.06_1_auw4p1.jpg",
       descriptionText: "I created Watch World Collectors on TikTok as a space for watch enthusiasts to share their passion for timepieces. What started as a simple idea quickly grew into a community of collectors and admirers, reaching 12.7K followers, 6 million views, and over 345K likes, all brought together by a shared appreciation for watches.",
       buttonText: "WATCH WORLD COLLECTORS",
       buttonLink: "https://www.tiktok.com/@your-account",
@@ -125,8 +125,8 @@ export default function Portfolio() {
       year: "2023",
       category: "marketing",
       type: "social-media",
-      image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80",
-      profileImage: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80",
+      image: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773245807/Picture12_nxep9y.jpg",
+      profileImage: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773245807/Picture12_nxep9y.jpg",
       descriptionText: "I helped build the digital presence of Sophie Real Estate Portugal, developing and managing its social media platforms while running both paid and organic marketing campaigns. Through targeted content and advertising strategies, the campaigns generated over 400 qualified leads, helping connect potential buyers with the agency's properties.",
       buttonText: "SOPHIE REAL ESTATE",
       buttonLink: "https://www.instagram.com/sophierealestate",
@@ -139,8 +139,8 @@ export default function Portfolio() {
       year: "2023",
       category: "marketing",
       type: "social-media",
-      image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80",
-      profileImage: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80",
+      image: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773241438/Screenshot_2026-03-10_213436_drok0m.png",
+      profileImage: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773241438/Screenshot_2026-03-10_213514_za5lg1.png",
       descriptionText: "I designed and developed a website as part of a campaign targeting Golden Visa investors interested in Portugal. The platform was created to showcase the services offered by Sophie Real Estate as a trusted partner for property acquisitions, presenting investment opportunities and guiding international buyers through the process of purchasing real estate in Portugal.",
       buttonText: "SOPHIE REAL ESTATE",
       buttonLink: "https://www.sophierealestate.com/golden-visa",
@@ -187,7 +187,7 @@ export default function Portfolio() {
   // Inquire Page
   if (showInquire) {
     return (
-      <div className="min-h-screen bg-white" style={{ fontFamily: "'Libre Baskerville', serif" }}>
+      <div className="min-h-screen bg-white" style={{ fontFamily: "'Inter', sans-serif" }}>
         {/* Navigation */}
         <nav className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50">
           <div className="max-w-screen-2xl mx-auto px-8 md:px-16 py-6 flex items-center justify-between">
@@ -237,7 +237,7 @@ export default function Portfolio() {
     };
 
     return (
-      <div className="min-h-screen bg-white" style={{ fontFamily: "'Libre Baskerville', serif" }}>
+      <div className="min-h-screen bg-white" style={{ fontFamily: "'Inter', sans-serif" }}>
         {/* Navigation */}
         <nav className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50">
           <div className="max-w-screen-2xl mx-auto px-8 md:px-16 py-6 flex items-center justify-between">
@@ -276,7 +276,7 @@ export default function Portfolio() {
               <div>
                 <button
                   onClick={handleCVClick}
-                  className="text-base md:text-2xl tracking-[0.15em] font-light hover:opacity-50 transition-opacity"
+                  className="text-sm md:text-lg tracking-[0.15em] font-light hover:opacity-50 transition-opacity"
                 >
                   CURRICULUM VITAE
                 </button>
@@ -306,7 +306,7 @@ export default function Portfolio() {
       };
 
       return (
-        <div className="min-h-screen bg-white" style={{ fontFamily: "'Libre Baskerville', serif" }}>
+        <div className="min-h-screen bg-white" style={{ fontFamily: "'Inter', sans-serif" }}>
           <nav className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50">
             <div className="max-w-screen-2xl mx-auto px-8 md:px-16 py-6 flex items-center justify-between">
               <button 
@@ -338,7 +338,7 @@ export default function Portfolio() {
             {showArrow && (
               <button 
                 onClick={scrollToBottom}
-                className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer hover:opacity-50 transition-opacity"
+                className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer hover:opacity-70 transition-opacity bg-white rounded-full p-4 shadow-lg"
               >
                 <svg 
                   width="24" 
@@ -397,7 +397,7 @@ export default function Portfolio() {
       const aspectRatio = selectedProduct.screenshotAspect === "square" ? "aspect-square" : "aspect-[9/16]";
 
       return (
-        <div className="min-h-screen bg-white" style={{ fontFamily: "'Libre Baskerville', serif" }}>
+        <div className="min-h-screen bg-white" style={{ fontFamily: "'Inter', sans-serif" }}>
           <nav className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50">
             <div className="max-w-screen-2xl mx-auto px-8 md:px-16 py-6 flex items-center justify-between">
               <button 
@@ -431,7 +431,7 @@ export default function Portfolio() {
             {showArrow && (
               <button 
                 onClick={scrollToBottom}
-                className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer hover:opacity-50 transition-opacity"
+                className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer hover:opacity-70 transition-opacity bg-white rounded-full p-4 shadow-lg"
               >
                 <svg 
                   width="24" 
@@ -501,7 +501,7 @@ export default function Portfolio() {
       };
 
       return (
-        <div className="min-h-screen bg-white" style={{ fontFamily: "'Libre Baskerville', serif" }}>
+        <div className="min-h-screen bg-white" style={{ fontFamily: "'Inter', sans-serif" }}>
           <nav className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50">
             <div className="max-w-screen-2xl mx-auto px-8 md:px-16 py-6 flex items-center justify-between">
               <button 
@@ -533,7 +533,7 @@ export default function Portfolio() {
             {showArrow && (
               <button 
                 onClick={scrollToProduct1}
-                className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer hover:opacity-50 transition-opacity"
+                className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer hover:opacity-70 transition-opacity bg-white rounded-full p-4 shadow-lg"
               >
                 <svg 
                   width="24" 
@@ -561,7 +561,7 @@ export default function Portfolio() {
                   </h2>
                 </div>
                 
-                <div className="aspect-[16/10] bg-neutral-50 overflow-hidden">
+                <div className="aspect-video bg-neutral-50 overflow-hidden">
                   <img 
                     src={selectedProduct.processImages[2]} 
                     alt={selectedProduct.productTitles[2]}
@@ -578,7 +578,7 @@ export default function Portfolio() {
                   </h2>
                 </div>
                 
-                <div className="aspect-[16/10] bg-neutral-50 overflow-hidden">
+                <div className="aspect-video bg-neutral-50 overflow-hidden">
                   <img 
                     src={selectedProduct.processImages[1]} 
                     alt={selectedProduct.productTitles[1]}
@@ -595,7 +595,7 @@ export default function Portfolio() {
                   </h2>
                 </div>
                 
-                <div className="aspect-[16/10] bg-neutral-50 overflow-hidden">
+                <div className="aspect-video bg-neutral-50 overflow-hidden">
                   <img 
                     src={selectedProduct.processImages[0]} 
                     alt={selectedProduct.productTitles[0]}
@@ -626,7 +626,7 @@ export default function Portfolio() {
     };
 
     return (
-      <div className="min-h-screen bg-white" style={{ fontFamily: "'Libre Baskerville', serif" }}>
+      <div className="min-h-screen bg-white" style={{ fontFamily: "'Inter', sans-serif" }}>
         <nav className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50">
           <div className="max-w-screen-2xl mx-auto px-8 md:px-16 py-6 flex items-center justify-between">
             <button 
@@ -657,7 +657,7 @@ export default function Portfolio() {
           {showArrow && (
             <button 
               onClick={scrollToStage1}
-              className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer hover:opacity-50 transition-opacity"
+              className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer hover:opacity-70 transition-opacity bg-white rounded-full p-4 shadow-lg"
             >
               <svg 
                 width="24" 
@@ -684,7 +684,7 @@ export default function Portfolio() {
                 </h2>
               </div>
               
-              <div className="aspect-[16/10] bg-neutral-50 overflow-hidden mb-8">
+              <div className="aspect-video bg-neutral-50 overflow-hidden mb-8">
                 <img 
                   src={selectedProduct.processImages[2]} 
                   alt="Stage 3"
@@ -718,7 +718,7 @@ export default function Portfolio() {
                 </h2>
               </div>
               
-              <div className="aspect-[16/10] bg-neutral-50 overflow-hidden mb-8">
+              <div className="aspect-video bg-neutral-50 overflow-hidden mb-8">
                 <img 
                   src={selectedProduct.processImages[1]} 
                   alt="Stage 2"
@@ -752,7 +752,7 @@ export default function Portfolio() {
                 </h2>
               </div>
               
-              <div className="aspect-[16/10] bg-neutral-50 overflow-hidden mb-8">
+              <div className="aspect-video bg-neutral-50 overflow-hidden mb-8">
                 <img 
                   src={selectedProduct.processImages[0]} 
                   alt="Stage 1"
@@ -785,7 +785,7 @@ export default function Portfolio() {
   }
 
   return (
-    <div className="min-h-screen bg-white" style={{ fontFamily: "'Libre Baskerville', serif" }}>
+    <div className="min-h-screen bg-white" style={{ fontFamily: "'Inter', sans-serif" }}>
       {/* Show homepage with category selection */}
       {selectedCategory === 'all' ? (
         <>
@@ -803,7 +803,7 @@ export default function Portfolio() {
                 <button
                   key={cat.id}
                   onClick={() => setSelectedCategory(cat.id)}
-                  className="text-base md:text-2xl tracking-[0.15em] font-light hover:opacity-50 transition-opacity"
+                  className="text-sm md:text-lg tracking-[0.15em] font-light hover:opacity-50 transition-opacity"
                 >
                   {cat.name}
                 </button>
@@ -815,13 +815,13 @@ export default function Portfolio() {
               {/* About and Inquire buttons */}
               <button
                 onClick={() => setShowAbout(true)}
-                className="text-base md:text-2xl tracking-[0.15em] font-light hover:opacity-50 transition-opacity"
+                className="text-sm md:text-lg tracking-[0.15em] font-light hover:opacity-50 transition-opacity"
               >
                 ABOUT
               </button>
               <button
                 onClick={() => setShowInquire(true)}
-                className="text-base md:text-2xl tracking-[0.15em] font-light hover:opacity-50 transition-opacity"
+                className="text-sm md:text-lg tracking-[0.15em] font-light hover:opacity-50 transition-opacity"
               >
                 INQUIRE
               </button>
