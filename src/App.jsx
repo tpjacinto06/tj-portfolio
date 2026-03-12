@@ -69,7 +69,7 @@ export default function Portfolio() {
       year: "2025",
       category: "engineering",
       type: "standard",
-      image: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773246602/WhatsApp_Image_2026-03-11_at_16.20.49_1_t63yax.jpg",
+      image: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773315986/Design_sem_nome_5_dsfgju.png",
       processImages: [
         "https://res.cloudinary.com/dbey0lqda/image/upload/v1773246587/WhatsApp_Image_2026-03-11_at_16.28.14_qerqma.jpg",
         "https://res.cloudinary.com/dbey0lqda/image/upload/v1773246586/WhatsApp_Image_2026-03-11_at_16.28.01_wpotbw.jpg",
@@ -86,8 +86,8 @@ export default function Portfolio() {
       type: "911-collection",
       image: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773269837/Gemini_Generated_Image_oev627oev627oev6_iazi3t.png",
       processImages: [
-        "https://res.cloudinary.com/dbey0lqda/image/upload/v1773269837/Gemini_Generated_Image_oev627oev627oev6_iazi3t.png",
-        "https://res.cloudinary.com/dbey0lqda/image/upload/v1773269837/Gemini_Generated_Image_oev627oev627oev6_iazi3t.png",
+        "https://res.cloudinary.com/dbey0lqda/image/upload/v1773317184/WhatsApp_Image_2026-03-12_at_12.04.18_nfbtms.jpg",
+        "https://res.cloudinary.com/dbey0lqda/image/upload/v1773317192/WhatsApp_Image_2026-03-12_at_12.04.18_1_cke9kl.jpg",
         "https://res.cloudinary.com/dbey0lqda/image/upload/v1773269837/Gemini_Generated_Image_oev627oev627oev6_iazi3t.png"
       ],
       productTitles: ["CHARGING CABLE HOLDER", "KEYCHAIN", "PAPERWEIGHT"]
@@ -102,7 +102,7 @@ export default function Portfolio() {
       image: "https://images.unsplash.com/photo-1532619675605-1ede6c2ed2b0?w=800&q=80",
       descriptionText: "Researched and analysed the origin, design and operation of ballast tank systems used in marine vessels such as submarines and container ships.",
       buttonText: "RESEARCH PAPER",
-      buttonLink: "/path-to-research-paper.pdf"
+      buttonLink: "#"
     },
     {
       id: 6,
@@ -115,7 +115,7 @@ export default function Portfolio() {
       profileImage: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773241460/WhatsApp_Image_2026-03-10_at_21.33.06_1_auw4p1.jpg",
       descriptionText: "I created Watch World Collectors on TikTok as a space for watch enthusiasts to share their passion for timepieces. What started as a simple idea quickly grew into a community of collectors and admirers, reaching 12.7K followers, 6 million views, and over 345K likes, all brought together by a shared appreciation for watches.",
       buttonText: "WATCH WORLD COLLECTORS",
-      buttonLink: "https://www.tiktok.com/@your-account",
+      buttonLink: "https://www.tiktok.com/@watchworldcollectors",
       screenshotAspect: "phone"
     },
     {
@@ -129,7 +129,7 @@ export default function Portfolio() {
       profileImage: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773245580/WhatsApp_Image_2026-03-11_at_16.11.35_yypozc.jpg",
       descriptionText: "I helped build the digital presence of Sophie Real Estate Portugal, developing and managing its social media platforms while running both paid and organic marketing campaigns. Through targeted content and advertising strategies, the campaigns generated over 400 qualified leads, helping connect potential buyers with the agency's properties.",
       buttonText: "SOPHIE REAL ESTATE",
-      buttonLink: "https://www.instagram.com/sophierealestate",
+      buttonLink: "https://www.instagram.com/sophierealestateportugal",
       screenshotAspect: "phone"
     },
     {
@@ -143,7 +143,7 @@ export default function Portfolio() {
       profileImage: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773241438/Screenshot_2026-03-10_213514_za5lg1.png",
       descriptionText: "I designed and developed a website as part of a campaign targeting Golden Visa investors interested in Portugal. The platform was created to showcase the services offered by Sophie Real Estate as a trusted partner for property acquisitions, presenting investment opportunities and guiding international buyers through the process of purchasing real estate in Portugal.",
       buttonText: "SOPHIE REAL ESTATE",
-      buttonLink: "https://www.sophierealestate.com/golden-visa",
+      buttonLink: "https://www.sophierealestate.eu/",
       screenshotAspect: "video"
     }
   ];
@@ -233,7 +233,7 @@ export default function Portfolio() {
   if (showAbout) {
     const handleCVClick = () => {
       // Open CV in new tab - you can replace this URL with your actual CV PDF URL
-      window.open('/path-to-your-cv.pdf', '_blank');
+      window.open('https://drive.google.com/file/d/1H9amYZtm4aLcRjg4Mk4iN_QWeMBm-KJQ/view?usp=drive_link', '_blank');
     };
 
     return (
@@ -350,24 +350,18 @@ export default function Portfolio() {
             )}
           </section>
 
-          {/* Button Section */}
-          <section className="bg-white py-24 px-8 md:px-16 flex items-center justify-center min-h-screen">
+          {/* Description Section with Button Below */}
+          <section id="description-section" className="bg-white pb-24 px-8 md:px-16 flex items-center justify-center min-h-screen">
             <div className="max-w-2xl mx-auto text-center">
+              <p className="text-sm leading-relaxed font-light text-neutral-600 mb-12">
+                {selectedProduct.descriptionText}
+              </p>
               <button
                 onClick={() => window.open(selectedProduct.buttonLink, '_blank')}
                 className="text-base md:text-2xl tracking-[0.15em] font-light hover:opacity-50 transition-opacity"
               >
                 {selectedProduct.buttonText}
               </button>
-            </div>
-          </section>
-
-          {/* Description Section at Bottom */}
-          <section id="description-section" className="bg-white pb-24 px-8 md:px-16">
-            <div className="max-w-2xl mx-auto">
-              <p className="text-sm leading-relaxed font-light text-neutral-600">
-                {selectedProduct.descriptionText}
-              </p>
             </div>
           </section>
         </div>
