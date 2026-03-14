@@ -8,15 +8,15 @@ export default function Portfolio() {
   const [showArrow, setShowArrow] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('all');
 
-  // Load Inter font
+  // Load Manrope font
   useEffect(() => {
     const link = document.createElement('link');
-    link.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap';
+    link.href = 'https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600&display=swap';
     link.rel = 'stylesheet';
     document.head.appendChild(link);
     
     // Apply font to body
-    document.body.style.fontFamily = "'Inter', sans-serif";
+    document.body.style.fontFamily = "'Manrope', sans-serif";
     
     return () => {
       document.head.removeChild(link);
@@ -187,7 +187,7 @@ export default function Portfolio() {
   // Inquire Page
   if (showInquire) {
     return (
-      <div className="min-h-screen bg-white" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <div className="min-h-screen bg-white" style={{ fontFamily: "'Manrope', sans-serif" }}>
         {/* Navigation */}
         <nav className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50">
           <div className="max-w-screen-2xl mx-auto px-8 md:px-16 py-6 flex items-center justify-between">
@@ -237,7 +237,7 @@ export default function Portfolio() {
     };
 
     return (
-      <div className="min-h-screen bg-white" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <div className="min-h-screen bg-white" style={{ fontFamily: "'Manrope', sans-serif" }}>
         {/* Navigation */}
         <nav className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50">
           <div className="max-w-screen-2xl mx-auto px-8 md:px-16 py-6 flex items-center justify-between">
@@ -306,7 +306,7 @@ export default function Portfolio() {
       };
 
       return (
-        <div className="min-h-screen bg-white" style={{ fontFamily: "'Inter', sans-serif" }}>
+        <div className="min-h-screen bg-white" style={{ fontFamily: "'Manrope', sans-serif" }}>
           <nav className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50">
             <div className="max-w-screen-2xl mx-auto px-8 md:px-16 py-6 flex items-center justify-between">
               <button 
@@ -387,7 +387,7 @@ export default function Portfolio() {
       const aspectRatio = selectedProduct.screenshotAspect === "square" ? "aspect-square" : selectedProduct.screenshotAspect === "video" ? "aspect-video" : "aspect-[9/16]";
 
       return (
-        <div className="min-h-screen bg-white" style={{ fontFamily: "'Inter', sans-serif" }}>
+        <div className="min-h-screen bg-white" style={{ fontFamily: "'Manrope', sans-serif" }}>
           <nav className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50">
             <div className="max-w-screen-2xl mx-auto px-8 md:px-16 py-6 flex items-center justify-between">
               <button 
@@ -488,7 +488,7 @@ export default function Portfolio() {
       };
 
       return (
-        <div className="min-h-screen bg-white" style={{ fontFamily: "'Inter', sans-serif" }}>
+        <div className="min-h-screen bg-white" style={{ fontFamily: "'Manrope', sans-serif" }}>
           <nav className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50">
             <div className="max-w-screen-2xl mx-auto px-8 md:px-16 py-6 flex items-center justify-between">
               <button 
@@ -609,7 +609,7 @@ export default function Portfolio() {
     };
 
     return (
-      <div className="min-h-screen bg-white" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <div className="min-h-screen bg-white" style={{ fontFamily: "'Manrope', sans-serif" }}>
         <nav className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50">
           <div className="max-w-screen-2xl mx-auto px-8 md:px-16 py-6 flex items-center justify-between">
             <button 
@@ -764,7 +764,7 @@ export default function Portfolio() {
   }
 
   return (
-    <div className="min-h-screen bg-white" style={{ fontFamily: "'Inter', sans-serif" }}>
+    <div className="min-h-screen bg-white" style={{ fontFamily: "'Manrope', sans-serif" }}>
       {/* Show homepage with category selection */}
       {selectedCategory === 'all' ? (
         <div className="h-screen flex flex-col overflow-hidden">
