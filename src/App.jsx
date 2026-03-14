@@ -39,7 +39,7 @@ export default function Portfolio() {
       year: "2026",
       category: "engineering",
       type: "standard",
-      image: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773241437/18e65f4d-f910-4e4b-8dc2-91b2802d99d8_yrdiuv.png",
+      image: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773524747/WhatsApp_Image_2026-03-14_at_21.39.56_1_phmuqc.jpg",
       processImages: [
         "https://res.cloudinary.com/dbey0lqda/image/upload/v1773241437/Picture4_leuekm.png",
         "https://res.cloudinary.com/dbey0lqda/image/upload/v1773241437/Picture1_j9cgag.jpg",
@@ -54,7 +54,7 @@ export default function Portfolio() {
       year: "2025",
       category: "engineering",
       type: "standard",
-      image: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773245807/Picture12_nxep9y.jpg",
+      image: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773524748/WhatsApp_Image_2026-03-14_at_21.39.56_2_zpie7i.jpg",
       processImages: [
         "https://res.cloudinary.com/dbey0lqda/image/upload/v1773241437/Monorail_Straddle_Beam_Design-1_1_funram.jpg",
         "https://res.cloudinary.com/dbey0lqda/image/upload/v1773245806/Picture24_cnyg7t.jpg",
@@ -99,7 +99,7 @@ export default function Portfolio() {
       year: "2023",
       category: "independent",
       type: "research-paper",
-      image: "https://images.unsplash.com/photo-1532619675605-1ede6c2ed2b0?w=800&q=80",
+      image: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773524747/WhatsApp_Image_2026-03-14_at_21.39.56_jizoee.jpg",
       descriptionText: "Researched and analysed the origin, design and operation of ballast tank systems used in marine vessels such as submarines and container ships.",
       buttonText: "RESEARCH PAPER",
       buttonLink: "#"
@@ -207,7 +207,7 @@ export default function Portfolio() {
         <main className="pt-32 pb-24 px-8 md:px-16">
           <div className="max-w-2xl mx-auto">
             <div className="mb-12">
-              <h1 className="text-3xl tracking-[0.1em] font-light mb-12">Get in Touch</h1>
+              <h1 className="text-3xl tracking-[0.1em] font-light mb-12">Inquire</h1>
               <div className="space-y-6 text-sm leading-relaxed font-light text-neutral-700">
                 <div>
                   <p className="text-xs tracking-[0.2em] text-neutral-400 mb-2">EMAIL</p>
