@@ -1,5 +1,64 @@
-import React, { useState, useEffect } from 'react';
-import { ArrowLeft } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import FloatingDeviceGallery from './FloatingDeviceGallery';
+import FadeImage from './FadeImage';
+import SisyphusIntro from './SisyphusIntro';
+import { scrollToY, scrollToTopImmediate } from './smoothScroll';
+
+const INTRO_KEY = 'tj-intro-played';
+
+// The intro plays once per session — returning to the homepage from a project
+// shows the settled logo rather than replaying the whole sequence. Kept pure:
+// StrictMode double-invokes state initialisers, so recording that it played
+// has to happen in an effect, not here.
+function shouldPlayIntro() {
+  if (typeof window === 'undefined') return false;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
+  try {
+    return !sessionStorage.getItem(INTRO_KEY);
+  } catch {
+    // Private browsing or blocked storage — play it, just don't remember.
+    return true;
+  }
+}
+
+// Shared entrance motion: content resolves upward out of nothing rather than
+// hard-cutting in. `delay` staggers siblings.
+const reveal = (delay = 0) => ({
+  initial: { opacity: 0, y: 24 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 1, ease: [0.16, 1, 0.3, 1], delay },
+});
+
+const CATEGORIES = [
+  { id: 'all', name: 'ALL' },
+  { id: 'physical', name: 'PHYSICAL', shortName: 'PH' },
+  { id: 'digital', name: 'DIGITAL', shortName: 'DI' }
+];
+
+// Splits a product's `process` text into per-stage { title, text } entries.
+function getStageContent(process, stageNum) {
+  const lines = process.split('\n');
+  const stageIndex = lines.findIndex(line => line.toUpperCase().includes(`STAGE ${stageNum}`));
+  if (stageIndex === -1) return { title: `STAGE ${stageNum}`, text: '' };
+
+  const nextIndex = lines.slice(stageIndex + 1).findIndex(line => /STAGE \d/.test(line.toUpperCase()));
+  const endIndex = nextIndex === -1 ? lines.length : stageIndex + 1 + nextIndex;
+
+  return {
+    title: lines[stageIndex].trim(),
+    text: lines.slice(stageIndex + 1, endIndex).join('\n').trim()
+  };
+}
+
+function scrollToElement(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const rect = el.getBoundingClientRect();
+  const absoluteTop = rect.top + window.pageYOffset;
+  const targetScroll = absoluteTop + rect.height - window.innerHeight;
+  scrollToY(targetScroll);
+}
 
 export default function Portfolio() {
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -7,37 +66,26 @@ export default function Portfolio() {
   const [showInquire, setShowInquire] = useState(false);
   const [showArrow, setShowArrow] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [playIntro] = useState(shouldPlayIntro);
 
-  // Load Manrope font
   useEffect(() => {
-    const link = document.createElement('link');
-    link.href = 'https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600&display=swap';
-    link.rel = 'stylesheet';
-    document.head.appendChild(link);
-    
-    // Apply font to body
-    document.body.style.fontFamily = "'Manrope', sans-serif";
-    
-    return () => {
-      document.head.removeChild(link);
-      document.body.style.fontFamily = '';
-    };
-  }, []);
+    if (!playIntro) return;
+    try {
+      sessionStorage.setItem(INTRO_KEY, '1');
+    } catch {
+      // Storage unavailable — the intro simply replays next load.
+    }
+  }, [playIntro]);
 
-  const categories = [
-    { id: 'all', name: 'ALL', description: 'Complete collection of work' },
-    { id: 'marketing', name: 'MARKETING', description: 'Marketing projects' },
-    { id: 'independent', name: 'INDEPENDENT PROJECTS', description: 'Independent work' },
-    { id: 'engineering', name: 'MECHANICAL ENGINEERING', description: 'Engineering projects' }
-  ];
+  const categories = CATEGORIES;
 
-  const defaultProducts = [
+  const products = [
     {
       id: 1,
       name: "Toting Tray",
       description: "Industry Partnered Project, Renishaw",
       year: "2026",
-      category: "engineering",
+      category: "physical",
       type: "standard",
       image: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773524747/WhatsApp_Image_2026-03-14_at_21.39.56_1_phmuqc.jpg",
       processImages: [
@@ -52,7 +100,7 @@ export default function Portfolio() {
       name: "Truss Bridge",
       description: "Smart Campus Project Detailed Design",
       year: "2025",
-      category: "engineering",
+      category: "physical",
       type: "standard",
       image: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773524748/WhatsApp_Image_2026-03-14_at_21.39.56_2_zpie7i.jpg",
       processImages: [
@@ -67,7 +115,7 @@ export default function Portfolio() {
       name: "Trebuchet",
       description: "Trebuchet, Sprint Based Project",
       year: "2025",
-      category: "engineering",
+      category: "physical",
       type: "standard",
       image: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773315986/Design_sem_nome_5_dsfgju.png",
       processImages: [
@@ -82,7 +130,7 @@ export default function Portfolio() {
       name: "911 Collection",
       description: "911 Inspired Products, Coming Soon",
       year: "2025",
-      category: "independent",
+      category: "physical",
       type: "911-collection",
       image: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773269837/Gemini_Generated_Image_oev627oev627oev6_iazi3t.png",
       processImages: [
@@ -97,7 +145,7 @@ export default function Portfolio() {
       name: "Research Paper",
       description: "Ballast Tanks Research Paper",
       year: "2023",
-      category: "independent",
+      category: "physical",
       type: "research-paper",
       image: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773524747/WhatsApp_Image_2026-03-14_at_21.39.56_jizoee.jpg",
       descriptionText: "Researched and analysed the origin, design and operation of ballast tank systems used in marine vessels such as submarines and container ships.",
@@ -105,62 +153,63 @@ export default function Portfolio() {
       buttonLink: "#"
     },
     {
-      id: 6,
-      name: "Watch World Collectors",
-      description: "TikTok Watch Community",
-      year: "2023",
-      category: "independent",
-      type: "social-media",
-      image: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773241470/WhatsApp_Image_2026-03-10_at_21.33.06_uthpac.jpg",
-      profileImage: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773241460/WhatsApp_Image_2026-03-10_at_21.33.06_1_auw4p1.jpg",
-      descriptionText: "I created Watch World Collectors on TikTok as a space for watch enthusiasts to share their passion for timepieces. What started as a simple idea quickly grew into a community of collectors and admirers, reaching 12.7K followers, 6 million views, and over 345K likes, all brought together by a shared appreciation for watches.",
-      buttonText: "WATCH WORLD COLLECTORS",
-      buttonLink: "https://www.tiktok.com/@watchworldcollectors",
-      screenshotAspect: "phone"
-    },
-    {
       id: 7,
       name: "Sophie Real Estate Portugal",
       description: "Sophie Real Estate, Instagram Account",
       year: "2023",
-      category: "marketing",
+      category: "digital",
       type: "social-media",
       image: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773251449/LOGO_WHITE.png_jcomck.png",
       profileImage: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773245580/WhatsApp_Image_2026-03-11_at_16.11.35_yypozc.jpg",
       descriptionText: "I helped build the digital presence of Sophie Real Estate Portugal, developing and managing its social media platforms while running both paid and organic marketing campaigns. Through targeted content and advertising strategies, the campaigns generated over 400 qualified leads, helping connect potential buyers with the agency's properties.",
       buttonText: "SOPHIE REAL ESTATE",
       buttonLink: "https://www.instagram.com/sophierealestateportugal",
-      screenshotAspect: "phone"
+      screenshotAspect: "phone",
+      deviceType: "iphone"
     },
     {
       id: 8,
       name: "Golden Visa Campaign",
       description: "Sophie Real Estate, Golden Visa Campaign Website",
       year: "2023",
-      category: "marketing",
+      category: "digital",
       type: "social-media",
       image: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773269849/Design_sem_nome_4_eblzoz.png",
       profileImage: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773241438/Screenshot_2026-03-10_213514_za5lg1.png",
       descriptionText: "I designed and developed a website as part of a campaign targeting Golden Visa investors interested in Portugal. The platform was created to showcase the services offered by Sophie Real Estate as a trusted partner for property acquisitions, presenting investment opportunities and guiding international buyers through the process of purchasing real estate in Portugal.",
       buttonText: "SOPHIE REAL ESTATE",
       buttonLink: "https://www.sophierealestate.eu/",
-      screenshotAspect: "video"
+      screenshotAspect: "video",
+      deviceType: "macbook"
+    },
+    {
+      id: 6,
+      name: "Watch World Collectors",
+      description: "TikTok Watch Community",
+      year: "2023",
+      category: "digital",
+      type: "social-media",
+      image: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773241470/WhatsApp_Image_2026-03-10_at_21.33.06_uthpac.jpg",
+      profileImage: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773241460/WhatsApp_Image_2026-03-10_at_21.33.06_1_auw4p1.jpg",
+      descriptionText: "I created Watch World Collectors on TikTok as a space for watch enthusiasts to share their passion for timepieces. What started as a simple idea quickly grew into a community of collectors and admirers, reaching 12.7K followers, 6 million views, and over 345K likes, all brought together by a shared appreciation for watches.",
+      buttonText: "WATCH WORLD COLLECTORS",
+      buttonLink: "https://www.tiktok.com/@watchworldcollectors",
+      screenshotAspect: "phone",
+      deviceType: "iphone"
     }
   ];
-
-  const products = defaultProducts;
 
   // Reset scroll to top when viewing product details
   useEffect(() => {
     if (selectedProduct || showAbout || showInquire) {
-      window.scrollTo(0, 0);
+      scrollToTopImmediate();
     }
   }, [selectedProduct, showAbout, showInquire]);
 
   // Reset scroll when returning to category page
   useEffect(() => {
     if (!selectedProduct && !showAbout && !showInquire && selectedCategory !== 'all') {
-      window.scrollTo(0, 0);
+      scrollToTopImmediate();
     }
   }, [selectedProduct, showAbout, showInquire, selectedCategory]);
 
@@ -180,26 +229,24 @@ export default function Portfolio() {
   }, [selectedProduct]);
 
   // Filter products by category and sort by year (newest first)
-  const filteredProducts = selectedCategory === 'all' 
-    ? products.sort((a, b) => parseInt(b.year) - parseInt(a.year))
-    : products.filter(p => p.category === selectedCategory).sort((a, b) => parseInt(b.year) - parseInt(a.year));
+  const filteredProducts = (selectedCategory === 'all'
+    ? [...products]
+    : products.filter(p => p.category === selectedCategory)
+  ).sort((a, b) => parseInt(b.year) - parseInt(a.year));
 
   // Inquire Page
   if (showInquire) {
     return (
-      <div className="min-h-screen bg-white" style={{ fontFamily: "'Manrope', sans-serif" }}>
+      <div className="min-h-screen bg-paper">
         {/* Navigation */}
-        <nav className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50">
-          <div className="max-w-screen-2xl mx-auto px-8 md:px-16 py-6 flex items-center justify-between">
+        <nav className="fixed top-0 w-full bg-paper/80 backdrop-blur-md z-50">
+          <div className="max-w-screen-2xl mx-auto px-8 md:px-16 py-6 flex items-center">
             <button 
               onClick={() => setShowInquire(false)}
-              className="flex items-center gap-2 text-xs tracking-[0.2em] font-light hover:opacity-50 transition-opacity"
+              className="text-xs tracking-[0.2em] font-light hover:opacity-50 transition-opacity duration-700 ease-luxe"
             >
-              <ArrowLeft size={16} strokeWidth={1} />
               BACK
             </button>
-            <div className="text-sm tracking-[0.3em] font-light">TJ</div>
-            <div className="w-16"></div>
           </div>
         </nav>
 
@@ -208,16 +255,16 @@ export default function Portfolio() {
           <div className="max-w-2xl mx-auto">
             <div className="mb-12">
               <h1 className="text-3xl tracking-[0.1em] font-light mb-12">Inquire</h1>
-              <div className="space-y-6 text-sm leading-relaxed font-light text-neutral-700">
+              <div className="space-y-6 text-sm leading-relaxed font-light text-vandyke/90">
                 <div>
-                  <p className="text-xs tracking-[0.2em] text-neutral-400 mb-2">EMAIL</p>
-                  <a href="mailto:tomasjacinto06@gmail.com" className="text-lg hover:opacity-50 transition-opacity">
+                  <p className="text-xs tracking-[0.2em] text-vandyke/40 mb-2">EMAIL</p>
+                  <a href="mailto:tomasjacinto06@gmail.com" className="text-lg hover:opacity-50 transition-opacity duration-700 ease-luxe">
                     tomasjacinto06@gmail.com
                   </a>
                 </div>
                 <div>
-                  <p className="text-xs tracking-[0.2em] text-neutral-400 mb-2">PHONE</p>
-                  <a href="tel:+351915807500" className="text-lg hover:opacity-50 transition-opacity">
+                  <p className="text-xs tracking-[0.2em] text-vandyke/40 mb-2">PHONE</p>
+                  <a href="tel:+351915807500" className="text-lg hover:opacity-50 transition-opacity duration-700 ease-luxe">
                     +351 915 807 500
                   </a>
                 </div>
@@ -237,19 +284,16 @@ export default function Portfolio() {
     };
 
     return (
-      <div className="min-h-screen bg-white" style={{ fontFamily: "'Manrope', sans-serif" }}>
+      <div className="min-h-screen bg-paper">
         {/* Navigation */}
-        <nav className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50">
-          <div className="max-w-screen-2xl mx-auto px-8 md:px-16 py-6 flex items-center justify-between">
+        <nav className="fixed top-0 w-full bg-paper/80 backdrop-blur-md z-50">
+          <div className="max-w-screen-2xl mx-auto px-8 md:px-16 py-6 flex items-center">
             <button 
               onClick={() => setShowAbout(false)}
-              className="flex items-center gap-2 text-xs tracking-[0.2em] font-light hover:opacity-50 transition-opacity"
+              className="text-xs tracking-[0.2em] font-light hover:opacity-50 transition-opacity duration-700 ease-luxe"
             >
-              <ArrowLeft size={16} strokeWidth={1} />
               BACK
             </button>
-            <div className="text-sm tracking-[0.3em] font-light">TJ</div>
-            <div className="w-16"></div>
           </div>
         </nav>
 
@@ -263,7 +307,7 @@ export default function Portfolio() {
               </div>
 
               {/* Bio text */}
-              <div className="text-sm leading-relaxed font-light text-neutral-700 space-y-6">
+              <div className="text-sm leading-relaxed font-light text-vandyke/90 space-y-6">
                 <p>
                   Ambitious second-year Mechanical Engineering student at Loughborough University (predicted 1st), driven by a genuine curiosity for how things work and a desire to build things that matter. With a background spanning engineering projects, international sports competitions, and real-world work experience.
                 </p>
@@ -276,7 +320,7 @@ export default function Portfolio() {
               <div>
                 <button
                   onClick={handleCVClick}
-                  className="text-sm md:text-lg tracking-[0.15em] font-light hover:opacity-50 transition-opacity"
+                  className="text-sm md:text-lg tracking-[0.15em] font-light hover:opacity-50 transition-opacity duration-700 ease-luxe"
                 >
                   CURRICULUM VITAE
                 </button>
@@ -291,50 +335,35 @@ export default function Portfolio() {
   if (selectedProduct) {
     // CUSTOM LAYOUT 1: Research Paper
     if (selectedProduct.type === "research-paper") {
-      const scrollToBottom = () => {
-        const descSection = document.getElementById('description-section');
-        if (descSection) {
-          const rect = descSection.getBoundingClientRect();
-          const absoluteTop = rect.top + window.pageYOffset;
-          const targetScroll = absoluteTop + rect.height - window.innerHeight;
-          
-          window.scrollTo({
-            top: targetScroll,
-            behavior: 'smooth'
-          });
-        }
-      };
+      const scrollToBottom = () => scrollToElement('description-section');
 
       return (
-        <div className="min-h-screen bg-white" style={{ fontFamily: "'Manrope', sans-serif" }}>
-          <nav className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50">
-            <div className="max-w-screen-2xl mx-auto px-8 md:px-16 py-6 flex items-center justify-between">
+        <div className="min-h-screen bg-paper">
+          <nav className="fixed top-0 w-full bg-paper/80 backdrop-blur-md z-50">
+            <div className="max-w-screen-2xl mx-auto px-8 md:px-16 py-6 flex items-center">
               <button 
                 onClick={() => {
                   setSelectedProduct(null);
                   setShowArrow(true);
-                  window.scrollTo(0, 0);
+                  scrollToTopImmediate();
                 }}
-                className="flex items-center gap-2 text-xs tracking-[0.2em] font-light hover:opacity-50 transition-opacity"
+                className="text-xs tracking-[0.2em] font-light hover:opacity-50 transition-opacity duration-700 ease-luxe"
               >
-                <ArrowLeft size={16} strokeWidth={1} />
                 BACK
               </button>
-              <div className="text-sm tracking-[0.3em] font-light">RESEARCH</div>
-              <div className="w-16"></div>
             </div>
           </nav>
 
           {/* Hero Image */}
-          <section className="h-screen relative flex items-center justify-center bg-white">
-            <h1 className="text-3xl md:text-5xl lg:text-6xl tracking-[0.2em] font-light text-center px-8 max-w-4xl">
+          <section className="h-screen relative flex items-center justify-center bg-paper">
+            <motion.h1 {...reveal(0.1)} className="text-3xl md:text-5xl lg:text-6xl tracking-[0.2em] font-light text-center px-8 max-w-4xl">
               {selectedProduct.name.toUpperCase()}
-            </h1>
+            </motion.h1>
             
             {showArrow && (
               <button 
                 onClick={scrollToBottom}
-                className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer hover:opacity-70 transition-opacity"
+                className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer hover:opacity-70 transition-opacity duration-700 ease-luxe"
               >
                 <svg 
                   width="24" 
@@ -351,14 +380,14 @@ export default function Portfolio() {
           </section>
 
           {/* Description Section with Button Below */}
-          <section id="description-section" className="bg-white pb-24 px-8 md:px-16 flex items-center justify-center min-h-screen">
+          <section id="description-section" className="bg-paper pb-24 px-8 md:px-16 flex items-center justify-center min-h-screen">
             <div className="max-w-2xl mx-auto text-center">
-              <p className="text-sm leading-relaxed font-light text-neutral-600 mb-12">
+              <p className="text-sm leading-relaxed font-light text-vandyke/75 mb-12">
                 {selectedProduct.descriptionText}
               </p>
               <button
                 onClick={() => window.open(selectedProduct.buttonLink, '_blank')}
-                className="text-base md:text-2xl tracking-[0.15em] font-light hover:opacity-50 transition-opacity"
+                className="text-base md:text-2xl tracking-[0.15em] font-light hover:opacity-50 transition-opacity duration-700 ease-luxe"
               >
                 {selectedProduct.buttonText}
               </button>
@@ -370,54 +399,37 @@ export default function Portfolio() {
 
     // CUSTOM LAYOUT 2: Social Media / Website (TikTok, Instagram, Golden Visa)
     if (selectedProduct.type === "social-media") {
-      const scrollToBottom = () => {
-        const descSection = document.getElementById('social-description-section-' + selectedProduct.id);
-        if (descSection) {
-          const rect = descSection.getBoundingClientRect();
-          const absoluteTop = rect.top + window.pageYOffset;
-          const targetScroll = absoluteTop + rect.height - window.innerHeight;
-          
-          window.scrollTo({
-            top: targetScroll,
-            behavior: 'smooth'
-          });
-        }
-      };
+      const scrollToBottom = () => scrollToElement('social-description-section-' + selectedProduct.id);
 
       const aspectRatio = selectedProduct.screenshotAspect === "square" ? "aspect-square" : selectedProduct.screenshotAspect === "video" ? "aspect-video" : "aspect-[9/16]";
 
       return (
-        <div className="min-h-screen bg-white" style={{ fontFamily: "'Manrope', sans-serif" }}>
-          <nav className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50">
-            <div className="max-w-screen-2xl mx-auto px-8 md:px-16 py-6 flex items-center justify-between">
+        <div className="min-h-screen bg-paper">
+          <nav className="fixed top-0 w-full bg-paper/80 backdrop-blur-md z-50">
+            <div className="max-w-screen-2xl mx-auto px-8 md:px-16 py-6 flex items-center">
               <button 
                 onClick={() => {
                   setSelectedProduct(null);
                   setShowArrow(true);
-                  window.scrollTo(0, 0);
+                  scrollToTopImmediate();
                 }}
-                className="flex items-center gap-2 text-xs tracking-[0.2em] font-light hover:opacity-50 transition-opacity"
+                className="text-xs tracking-[0.2em] font-light hover:opacity-50 transition-opacity duration-700 ease-luxe"
               >
-                <ArrowLeft size={16} strokeWidth={1} />
                 BACK
               </button>
-              <div className="text-sm tracking-[0.3em] font-light">
-                {selectedProduct.screenshotAspect === "video" ? "MARKETING CAMPAIGN" : selectedProduct.screenshotAspect === "square" ? "WEBSITE" : "SOCIAL MEDIA"}
-              </div>
-              <div className="w-16"></div>
             </div>
           </nav>
 
           {/* Hero Image */}
-          <section className="h-screen relative flex items-center justify-center bg-white">
-            <h1 className="text-3xl md:text-5xl lg:text-6xl tracking-[0.2em] font-light text-center px-8 max-w-4xl">
+          <section className="h-screen relative flex items-center justify-center bg-paper">
+            <motion.h1 {...reveal(0.1)} className="text-3xl md:text-5xl lg:text-6xl tracking-[0.2em] font-light text-center px-8 max-w-4xl">
               {selectedProduct.name.toUpperCase()}
-            </h1>
+            </motion.h1>
             
             {showArrow && (
               <button 
                 onClick={scrollToBottom}
-                className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer hover:opacity-70 transition-opacity"
+                className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer hover:opacity-70 transition-opacity duration-700 ease-luxe"
               >
                 <svg 
                   width="24" 
@@ -435,14 +447,14 @@ export default function Portfolio() {
 
           {/* Screenshot Section - clickable image, hidden for video aspect (Golden Visa) */}
           {selectedProduct.screenshotAspect !== "video" && (
-            <section className="bg-white py-24 px-8 md:px-16 flex items-center justify-center min-h-screen">
+            <section className="bg-paper py-24 px-8 md:px-16 flex items-center justify-center min-h-screen">
               <div className="max-w-md mx-auto">
                 <button 
                   onClick={() => window.open(selectedProduct.buttonLink, '_blank')}
-                  className="block hover:opacity-70 transition-opacity cursor-pointer"
+                  className="block hover:opacity-70 transition-opacity duration-700 ease-luxe cursor-pointer"
                 >
-                  <div className={`${aspectRatio} bg-neutral-50 overflow-hidden`}>
-                    <img 
+                  <div className={`${aspectRatio} bg-vandyke/5 overflow-hidden`}>
+                    <FadeImage 
                       src={selectedProduct.profileImage} 
                       alt="Screenshot"
                       className="w-full h-full object-cover"
@@ -454,14 +466,14 @@ export default function Portfolio() {
           )}
 
           {/* Description Section at Bottom */}
-          <section id={'social-description-section-' + selectedProduct.id} className="bg-white pb-24 px-8 md:px-16 flex items-center justify-center min-h-screen">
+          <section id={'social-description-section-' + selectedProduct.id} className="bg-paper pb-24 px-8 md:px-16 flex items-center justify-center min-h-screen">
             <div className="max-w-2xl mx-auto text-center">
-              <p className="text-sm leading-relaxed font-light text-neutral-600 mb-12">
+              <p className="text-sm leading-relaxed font-light text-vandyke/75 mb-12">
                 {selectedProduct.descriptionText}
               </p>
               <button
                 onClick={() => window.open(selectedProduct.buttonLink, '_blank')}
-                className="text-base md:text-2xl tracking-[0.15em] font-light hover:opacity-50 transition-opacity"
+                className="text-base md:text-2xl tracking-[0.15em] font-light hover:opacity-50 transition-opacity duration-700 ease-luxe"
               >
                 {selectedProduct.buttonText}
               </button>
@@ -473,50 +485,35 @@ export default function Portfolio() {
 
     // CUSTOM LAYOUT 3: 911 Collection
     if (selectedProduct.type === "911-collection") {
-      const scrollToProduct1 = () => {
-        const section = document.getElementById('product-1');
-        if (section) {
-          const rect = section.getBoundingClientRect();
-          const absoluteTop = rect.top + window.pageYOffset;
-          const targetScroll = absoluteTop + rect.height - window.innerHeight;
-          
-          window.scrollTo({
-            top: targetScroll,
-            behavior: 'smooth'
-          });
-        }
-      };
+      const scrollToProduct1 = () => scrollToElement('product-1');
 
       return (
-        <div className="min-h-screen bg-white" style={{ fontFamily: "'Manrope', sans-serif" }}>
-          <nav className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50">
-            <div className="max-w-screen-2xl mx-auto px-8 md:px-16 py-6 flex items-center justify-between">
+        <div className="min-h-screen bg-paper">
+          <nav className="fixed top-0 w-full bg-paper/80 backdrop-blur-md z-50">
+            <div className="max-w-screen-2xl mx-auto px-8 md:px-16 py-6 flex items-center">
               <button 
                 onClick={() => {
                   setSelectedProduct(null);
                   setShowArrow(true);
-                  window.scrollTo(0, 0);
+                  scrollToTopImmediate();
                 }}
-                className="flex items-center gap-2 text-xs tracking-[0.2em] font-light hover:opacity-50 transition-opacity"
+                className="text-xs tracking-[0.2em] font-light hover:opacity-50 transition-opacity duration-700 ease-luxe"
               >
-                <ArrowLeft size={16} strokeWidth={1} />
                 BACK
               </button>
-              <div className="text-sm tracking-[0.3em] font-light">911 COLLECTION</div>
-              <div className="w-16"></div>
             </div>
           </nav>
 
           {/* Hero Image */}
-          <section className="h-screen relative flex items-center justify-center bg-white">
-            <h1 className="text-3xl md:text-5xl lg:text-6xl tracking-[0.2em] font-light text-center px-8 max-w-4xl">
+          <section className="h-screen relative flex items-center justify-center bg-paper">
+            <motion.h1 {...reveal(0.1)} className="text-3xl md:text-5xl lg:text-6xl tracking-[0.2em] font-light text-center px-8 max-w-4xl">
               {selectedProduct.name.toUpperCase()}
-            </h1>
+            </motion.h1>
             
             {showArrow && (
               <button 
                 onClick={scrollToProduct1}
-                className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer hover:opacity-70 transition-opacity"
+                className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer hover:opacity-70 transition-opacity duration-700 ease-luxe"
               >
                 <svg 
                   width="24" 
@@ -533,7 +530,7 @@ export default function Portfolio() {
           </section>
 
           {/* Products in reverse order (3, 2, 1) */}
-          <section className="bg-white py-24 px-8 md:px-16">
+          <section className="bg-paper py-24 px-8 md:px-16">
             <div className="max-w-4xl mx-auto">
               
               {/* Product 3 */}
@@ -544,8 +541,8 @@ export default function Portfolio() {
                   </h2>
                 </div>
                 
-                <div className="aspect-video bg-neutral-50 overflow-hidden">
-                  <img 
+                <div className="aspect-video bg-vandyke/5 overflow-hidden">
+                  <FadeImage 
                     src={selectedProduct.processImages[2]} 
                     alt={selectedProduct.productTitles[2]}
                     className="w-full h-full object-cover"
@@ -561,8 +558,8 @@ export default function Portfolio() {
                   </h2>
                 </div>
                 
-                <div className="aspect-video bg-neutral-50 overflow-hidden">
-                  <img 
+                <div className="aspect-video bg-vandyke/5 overflow-hidden">
+                  <FadeImage 
                     src={selectedProduct.processImages[1]} 
                     alt={selectedProduct.productTitles[1]}
                     className="w-full h-full object-cover"
@@ -578,8 +575,8 @@ export default function Portfolio() {
                   </h2>
                 </div>
                 
-                <div className="aspect-video bg-neutral-50 overflow-hidden">
-                  <img 
+                <div className="aspect-video bg-vandyke/5 overflow-hidden">
+                  <FadeImage 
                     src={selectedProduct.processImages[0]} 
                     alt={selectedProduct.productTitles[0]}
                     className="w-full h-full object-cover"
@@ -594,49 +591,34 @@ export default function Portfolio() {
     }
 
     // DEFAULT LAYOUT: Standard 3-Stage Design Process
-    const scrollToStage1 = () => {
-      const stage1Section = document.getElementById('stage-1');
-      if (stage1Section) {
-        const rect = stage1Section.getBoundingClientRect();
-        const absoluteTop = rect.top + window.pageYOffset;
-        const targetScroll = absoluteTop + rect.height - window.innerHeight;
-        
-        window.scrollTo({
-          top: targetScroll,
-          behavior: 'smooth'
-        });
-      }
-    };
+    const scrollToStage1 = () => scrollToElement('stage-1');
 
     return (
-      <div className="min-h-screen bg-white" style={{ fontFamily: "'Manrope', sans-serif" }}>
-        <nav className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50">
-          <div className="max-w-screen-2xl mx-auto px-8 md:px-16 py-6 flex items-center justify-between">
+      <div className="min-h-screen bg-paper">
+        <nav className="fixed top-0 w-full bg-paper/80 backdrop-blur-md z-50">
+          <div className="max-w-screen-2xl mx-auto px-8 md:px-16 py-6 flex items-center">
             <button 
               onClick={() => {
                 setSelectedProduct(null);
                 setShowArrow(true);
-                window.scrollTo(0, 0);
+                scrollToTopImmediate();
               }}
-              className="flex items-center gap-2 text-xs tracking-[0.2em] font-light hover:opacity-50 transition-opacity"
+              className="text-xs tracking-[0.2em] font-light hover:opacity-50 transition-opacity duration-700 ease-luxe"
             >
-              <ArrowLeft size={16} strokeWidth={1} />
               BACK
             </button>
-            <div className="text-sm tracking-[0.3em] font-light">DESIGN PROCESS</div>
-            <div className="w-16"></div>
           </div>
         </nav>
 
-        <section className="h-screen relative flex items-center justify-center bg-white">
-          <h1 className="text-3xl md:text-5xl lg:text-6xl tracking-[0.2em] font-light text-center px-8 max-w-4xl">
+        <section className="h-screen relative flex items-center justify-center bg-paper">
+          <motion.h1 {...reveal(0.1)} className="text-3xl md:text-5xl lg:text-6xl tracking-[0.2em] font-light text-center px-8 max-w-4xl">
             {selectedProduct.name.toUpperCase()}
-          </h1>
+          </motion.h1>
           
           {showArrow && (
             <button 
               onClick={scrollToStage1}
-              className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer hover:opacity-70 transition-opacity"
+              className="absolute bottom-12 left-1/2 -translate-x-1/2 z-10 animate-bounce cursor-pointer hover:opacity-70 transition-opacity duration-700 ease-luxe"
             >
               <svg 
                 width="24" 
@@ -652,110 +634,39 @@ export default function Portfolio() {
           )}
         </section>
 
-        <section className="bg-white py-24 px-8 md:px-16">
+        <section className="bg-paper py-24 px-8 md:px-16">
           <div className="max-w-4xl mx-auto">
-            
-            {/* Stage 3 */}
-            <div className="mb-32">
-              <div className="mb-8">
-                <h2 className="text-2xl tracking-[0.15em] font-light mb-8">
-                  {selectedProduct.process.split('\n').find(line => line.toUpperCase().includes('STAGE 3'))?.trim() || 'STAGE 3'}
-                </h2>
-              </div>
-              
-              <div className="aspect-video bg-neutral-50 overflow-hidden mb-8 md:max-w-2xl md:mx-auto">
-                <img 
-                  src={selectedProduct.processImages[2]} 
-                  alt="Stage 3"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              
-              {(() => {
-                const lines = selectedProduct.process.split('\n');
-                const stage3Index = lines.findIndex(line => line.toUpperCase().includes('STAGE 3'));
-                if (stage3Index === -1) return null;
-                
-                const nextStageIndex = lines.slice(stage3Index + 1).findIndex(line => line.toUpperCase().includes('STAGE'));
-                const endIndex = nextStageIndex === -1 ? lines.length : stage3Index + 1 + nextStageIndex;
-                
-                const stage3Text = lines.slice(stage3Index + 1, endIndex).join('\n').trim();
-                
-                return stage3Text && stage3Text.length > 0 ? (
-                  <p className="text-sm leading-relaxed font-light text-neutral-600 max-w-2xl whitespace-pre-line">
-                    {stage3Text}
-                  </p>
-                ) : null;
-              })()}
-            </div>
 
-            {/* Stage 2 */}
-            <div className="mb-32">
-              <div className="mb-8">
-                <h2 className="text-2xl tracking-[0.15em] font-light mb-8">
-                  {selectedProduct.process.split('\n').find(line => line.toUpperCase().includes('STAGE 2'))?.trim() || 'STAGE 2'}
-                </h2>
-              </div>
-              
-              <div className="aspect-video bg-neutral-50 overflow-hidden mb-8 md:max-w-2xl md:mx-auto">
-                <img 
-                  src={selectedProduct.processImages[1]} 
-                  alt="Stage 2"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              
-              {(() => {
-                const lines = selectedProduct.process.split('\n');
-                const stage2Index = lines.findIndex(line => line.toUpperCase().includes('STAGE 2'));
-                if (stage2Index === -1) return null;
-                
-                const stage3Index = lines.slice(stage2Index + 1).findIndex(line => line.toUpperCase().includes('STAGE 3'));
-                const endIndex = stage3Index === -1 ? lines.length : stage2Index + 1 + stage3Index;
-                
-                const stage2Text = lines.slice(stage2Index + 1, endIndex).join('\n').trim();
-                
-                return stage2Text && stage2Text.length > 0 ? (
-                  <p className="text-sm leading-relaxed font-light text-neutral-600 max-w-2xl whitespace-pre-line">
-                    {stage2Text}
-                  </p>
-                ) : null;
-              })()}
-            </div>
+            {[3, 2, 1].map(stageNum => {
+              const { title, text } = getStageContent(selectedProduct.process, stageNum);
+              return (
+                <div
+                  key={stageNum}
+                  id={stageNum === 1 ? 'stage-1' : undefined}
+                  className={stageNum === 1 ? 'mb-24' : 'mb-32'}
+                >
+                  <div className="mb-8">
+                    <h2 className="text-2xl tracking-[0.15em] font-light mb-8">
+                      {title}
+                    </h2>
+                  </div>
 
-            {/* Stage 1 */}
-            <div id="stage-1" className="mb-24">
-              <div className="mb-8">
-                <h2 className="text-2xl tracking-[0.15em] font-light mb-8">
-                  {selectedProduct.process.split('\n').find(line => line.toUpperCase().includes('STAGE 1'))?.trim() || 'STAGE 1'}
-                </h2>
-              </div>
-              
-              <div className="aspect-video bg-neutral-50 overflow-hidden mb-8 md:max-w-2xl md:mx-auto">
-                <img 
-                  src={selectedProduct.processImages[0]} 
-                  alt="Stage 1"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              
-              {(() => {
-                const lines = selectedProduct.process.split('\n');
-                const stage1Index = lines.findIndex(line => line.toUpperCase().includes('STAGE 1'));
-                if (stage1Index === -1) return null;
-                
-                const stage2Index = lines.slice(stage1Index + 1).findIndex(line => line.toUpperCase().includes('STAGE 2'));
-                const endIndex = stage2Index === -1 ? lines.length : stage1Index + 1 + stage2Index;
-                
-                const stage1Text = lines.slice(stage1Index + 1, endIndex).join('\n').trim();
-                
-                return stage1Text && stage1Text.length > 0 ? (
-                  <p className="text-sm leading-relaxed font-light text-neutral-600 max-w-2xl whitespace-pre-line">
-                    {stage1Text}
-                  </p>
-                ) : null;
-              })()}
-            </div>
+                  <div className="aspect-video bg-vandyke/5 overflow-hidden mb-8 md:max-w-2xl md:mx-auto">
+                    <FadeImage
+                      src={selectedProduct.processImages[stageNum - 1]}
+                      alt={`Stage ${stageNum}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+
+                  {text && (
+                    <p className="text-sm leading-relaxed font-light text-vandyke/75 max-w-2xl whitespace-pre-line">
+                      {text}
+                    </p>
+                  )}
+                </div>
+              );
+            })}
 
           </div>
         </section>
@@ -764,150 +675,105 @@ export default function Portfolio() {
   }
 
   return (
-    <div className="min-h-screen bg-white" style={{ fontFamily: "'Manrope', sans-serif" }}>
+    <div className="min-h-screen bg-paper">
       {/* Show homepage with category selection */}
       {selectedCategory === 'all' ? (
-        <div className="h-screen flex flex-col overflow-hidden">
-          {/* Minimal Navigation - Homepage */}
-          <nav className="flex-shrink-0 w-full bg-white/80 backdrop-blur-md z-50 border-b border-black/5">
-            <div className="max-w-screen-2xl mx-auto px-8 md:px-16 py-6 flex items-center justify-center">
-              <div className="text-sm tracking-[0.3em] font-light">TJ</div>
-            </div>
-          </nav>
+        <div className="h-screen flex items-center justify-center px-8">
+          <div className="w-full flex flex-col items-center justify-center gap-10 md:gap-14">
+            <SisyphusIntro play={playIntro} />
 
-          {/* Centered Category Menu */}
-          <main className="flex-1 flex items-center justify-center px-8 overflow-hidden">
-            <div className="flex flex-col items-center justify-center space-y-6 md:space-y-8">
-              {categories.filter(c => c.id !== 'all').map(cat => (
-                <button
+            <div className="flex flex-row items-center gap-10 md:gap-16">
+              {categories.filter(c => c.id !== 'all').map((cat, i) => (
+                <motion.button
                   key={cat.id}
+                  {...reveal(2.4 + i * 0.12)}
                   onClick={() => setSelectedCategory(cat.id)}
-                  className="text-sm md:text-lg tracking-[0.15em] font-light hover:opacity-50 transition-opacity"
+                  className="text-lg md:text-2xl tracking-[0.15em] font-light hover:opacity-50 transition-opacity duration-700 ease-luxe"
                 >
-                  {cat.name}
-                </button>
+                  {cat.shortName}
+                </motion.button>
               ))}
-              
-              {/* Divider */}
-              <div className="w-px h-6 md:h-8 bg-neutral-200"></div>
-              
-              {/* About and Inquire buttons */}
-              <button
-                onClick={() => setShowAbout(true)}
-                className="text-sm md:text-lg tracking-[0.15em] font-light hover:opacity-50 transition-opacity"
-              >
-                ABOUT
-              </button>
-              <button
-                onClick={() => setShowInquire(true)}
-                className="text-sm md:text-lg tracking-[0.15em] font-light hover:opacity-50 transition-opacity"
-              >
-                INQUIRE
-              </button>
             </div>
-          </main>
 
-          {/* Minimal Footer */}
-          <footer className="flex-shrink-0 w-full border-t border-black/5 py-6 md:py-8 px-8 md:px-16 bg-white/80 backdrop-blur-md">
-            <div className="max-w-screen-2xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-              <p className="text-xs tracking-[0.2em] font-light text-neutral-400">
-                TJ © 2026
-              </p>
-              <div className="flex gap-8">
-                <button 
-                  onClick={() => setShowInquire(true)}
-                  className="text-xs tracking-[0.2em] font-light text-neutral-400 hover:text-black transition-colors"
-                >
-                  INQUIRE
-                </button>
-              </div>
-            </div>
-          </footer>
+            {/* About button */}
+            <motion.button
+              {...reveal(2.64)}
+              onClick={() => setShowAbout(true)}
+              className="text-lg md:text-2xl tracking-[0.15em] font-light hover:opacity-50 transition-opacity duration-700 ease-luxe"
+            >
+              TJ
+            </motion.button>
+          </div>
         </div>
       ) : (
         <>
           {/* Category Page Navigation */}
-          <nav className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50">
-            <div className="max-w-screen-2xl mx-auto px-8 md:px-16 py-6 flex items-center justify-between">
+          <nav className="fixed top-0 w-full bg-paper/80 backdrop-blur-md z-50">
+            <div className="max-w-screen-2xl mx-auto px-8 md:px-16 py-6 flex items-center">
               <button
                 onClick={() => setSelectedCategory('all')}
-                className="flex items-center gap-2 text-xs tracking-[0.2em] font-light hover:opacity-50 transition-opacity"
+                className="text-xs tracking-[0.2em] font-light hover:opacity-50 transition-opacity duration-700 ease-luxe"
               >
-                <ArrowLeft size={16} strokeWidth={1} />
-                HOME
+                BACK
               </button>
-              
-              <div className="text-sm tracking-[0.3em] font-light">TJ</div>
-
-              <div className="w-16"></div>
             </div>
           </nav>
 
           {/* Category Header */}
-          <div className="pt-32 pb-12 px-8 md:px-16 text-center">
+          <motion.div {...reveal()} className="pt-32 pb-12 px-8 md:px-16 text-center">
             <h1 className="text-3xl tracking-[0.15em] font-light">
               {categories.find(c => c.id === selectedCategory)?.name}
             </h1>
-          </div>
+          </motion.div>
 
-          {/* Gallery Grid */}
-          <main className="pb-24 px-8 md:px-16">
-            <div className="max-w-screen-2xl mx-auto">
-              {filteredProducts.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16">
-                  {filteredProducts.map(product => (
-                    <div 
-                      key={product.id} 
-                      className="group cursor-pointer"
-                      onClick={() => setSelectedProduct(product)}
-                    >
-                      <div className="aspect-square bg-neutral-50 overflow-hidden mb-4 relative">
-                        <img 
-                          src={product.image} 
-                          alt={product.name}
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                        />
-                        {/* Desktop hover overlay with name and year */}
-                        <div className="hidden md:flex absolute inset-0 bg-white/90 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 items-center justify-center">
-                          <div className="text-center">
-                            <h3 className="text-lg tracking-[0.1em] font-light mb-1">{product.name}</h3>
-                            <p className="text-xs tracking-[0.2em] text-neutral-500">{product.year}</p>
+          {/* Gallery */}
+          {selectedCategory === 'digital' && filteredProducts.length > 0 ? (
+            <FloatingDeviceGallery products={filteredProducts} onSelect={setSelectedProduct} />
+          ) : (
+            <main className="pb-24 px-8 md:px-16">
+              <div className="max-w-screen-2xl mx-auto">
+                {filteredProducts.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16">
+                    {filteredProducts.map((product, i) => (
+                      <motion.div
+                        key={product.id}
+                        {...reveal(0.15 + i * 0.08)}
+                        data-cursor="VIEW"
+                        className="group cursor-pointer"
+                        onClick={() => setSelectedProduct(product)}
+                      >
+                        <div className="aspect-square bg-vandyke/5 overflow-hidden mb-4 relative">
+                          <FadeImage
+                            src={product.image}
+                            alt={product.name}
+                            delay={0.15 + i * 0.08}
+                            className="w-full h-full object-cover group-hover:scale-105"
+                          />
+                          {/* Desktop hover overlay with name and year */}
+                          <div className="hidden md:flex absolute inset-0 bg-paper/90 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-luxe items-center justify-center">
+                            <div className="text-center">
+                              <h3 className="text-lg tracking-[0.1em] font-light mb-1">{product.name}</h3>
+                              <p className="text-xs tracking-[0.2em] text-vandyke/60">{product.year}</p>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      
-                      <p className="text-xs tracking-[0.15em] font-light text-neutral-600">
-                        {product.description}, {product.year}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="min-h-[50vh] flex items-center justify-center">
-                  <p className="text-sm tracking-[0.2em] font-light text-neutral-400">
-                    Coming soon…
-                  </p>
-                </div>
-              )}
-            </div>
-          </main>
 
-          {/* Minimal Footer */}
-          <footer className="border-t border-black/5 py-8 px-8 md:px-16">
-            <div className="max-w-screen-2xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-              <p className="text-xs tracking-[0.2em] font-light text-neutral-400">
-                TJ © 2026
-              </p>
-              <div className="flex gap-8">
-                <button 
-                  onClick={() => setShowInquire(true)}
-                  className="text-xs tracking-[0.2em] font-light text-neutral-400 hover:text-black transition-colors"
-                >
-                  INQUIRE
-                </button>
+                        <p className="text-xs tracking-[0.15em] font-light text-vandyke/75">
+                          {product.description}, {product.year}
+                        </p>
+                      </motion.div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="min-h-[50vh] flex items-center justify-center">
+                    <p className="text-sm tracking-[0.2em] font-light text-vandyke/40">
+                      Coming soon…
+                    </p>
+                  </div>
+                )}
               </div>
-            </div>
-          </footer>
+            </main>
+          )}
         </>
       )}
     </div>
