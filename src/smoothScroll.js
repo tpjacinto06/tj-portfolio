@@ -18,9 +18,13 @@ export function initSmoothScroll() {
   });
 
   let ticked = false;
+  const instance = lenis;
   const raf = time => {
+    // The safety net below can destroy this instance before a late first frame
+    // lands, so never assume it is still alive.
+    if (lenis !== instance) return;
     ticked = true;
-    lenis.raf(time);
+    instance.raf(time);
     requestAnimationFrame(raf);
   };
   requestAnimationFrame(raf);

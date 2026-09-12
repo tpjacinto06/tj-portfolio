@@ -36,6 +36,14 @@ const CATEGORIES = [
   { id: 'digital', name: 'DIGITAL', shortName: 'DI' }
 ];
 
+// Physical work is split once more by how it came about. EVERYTHING is a
+// pass-through rather than a value any product carries.
+const ORIGINS = [
+  { id: 'manufactured', name: 'MANUFACTURED' },
+  { id: 'conceptualized', name: 'CONCEPTUALIZED' },
+  { id: 'everything', name: 'EVERYTHING' }
+];
+
 // Splits a product's `process` text into per-stage { title, text } entries.
 function getStageContent(process, stageNum) {
   const lines = process.split('\n');
@@ -66,7 +74,17 @@ export default function Portfolio() {
   const [showInquire, setShowInquire] = useState(false);
   const [showArrow, setShowArrow] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedOrigin, setSelectedOrigin] = useState(null);
   const [playIntro] = useState(shouldPlayIntro);
+  const [introSeen, setIntroSeen] = useState(!playIntro);
+
+  // Leaving the homepage retires the intro: the mark stays as the settled logo
+  // and the buttons come straight in on every return.
+  const leaveHome = () => setIntroSeen(true);
+
+  // The long delay exists only to let the intro breathe before the buttons
+  // arrive. Once it's been seen, there's nothing to wait for.
+  const homeDelay = introSeen ? 0 : 2.4;
 
   useEffect(() => {
     if (!playIntro) return;
@@ -86,6 +104,7 @@ export default function Portfolio() {
       description: "Industry Partnered Project, Renishaw",
       year: "2026",
       category: "physical",
+      origin: "manufactured",
       type: "standard",
       image: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773524747/WhatsApp_Image_2026-03-14_at_21.39.56_1_phmuqc.jpg",
       processImages: [
@@ -101,6 +120,7 @@ export default function Portfolio() {
       description: "Smart Campus Project Detailed Design",
       year: "2025",
       category: "physical",
+      origin: "manufactured",
       type: "standard",
       image: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773524748/WhatsApp_Image_2026-03-14_at_21.39.56_2_zpie7i.jpg",
       processImages: [
@@ -116,6 +136,7 @@ export default function Portfolio() {
       description: "Trebuchet, Sprint Based Project",
       year: "2025",
       category: "physical",
+      origin: "manufactured",
       type: "standard",
       image: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773315986/Design_sem_nome_5_dsfgju.png",
       processImages: [
@@ -131,6 +152,7 @@ export default function Portfolio() {
       description: "911 Inspired Products, Coming Soon",
       year: "2025",
       category: "physical",
+      origin: "conceptualized",
       type: "911-collection",
       image: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773269837/Gemini_Generated_Image_oev627oev627oev6_iazi3t.png",
       processImages: [
@@ -146,6 +168,9 @@ export default function Portfolio() {
       description: "Ballast Tanks Research Paper",
       year: "2023",
       category: "physical",
+      origin: "manufactured",
+      // Hidden from the site but kept in full for future use.
+      hidden: true,
       type: "research-paper",
       image: "https://res.cloudinary.com/dbey0lqda/image/upload/v1773524747/WhatsApp_Image_2026-03-14_at_21.39.56_jizoee.jpg",
       descriptionText: "Researched and analysed the origin, design and operation of ballast tank systems used in marine vessels such as submarines and container ships.",
@@ -164,7 +189,6 @@ export default function Portfolio() {
       descriptionText: "I helped build the digital presence of Sophie Real Estate Portugal, developing and managing its social media platforms while running both paid and organic marketing campaigns. Through targeted content and advertising strategies, the campaigns generated over 400 qualified leads, helping connect potential buyers with the agency's properties.",
       buttonText: "SOPHIE REAL ESTATE",
       buttonLink: "https://www.instagram.com/sophierealestateportugal",
-      screenshotAspect: "phone",
       deviceType: "iphone"
     },
     {
@@ -179,7 +203,6 @@ export default function Portfolio() {
       descriptionText: "I designed and developed a website as part of a campaign targeting Golden Visa investors interested in Portugal. The platform was created to showcase the services offered by Sophie Real Estate as a trusted partner for property acquisitions, presenting investment opportunities and guiding international buyers through the process of purchasing real estate in Portugal.",
       buttonText: "SOPHIE REAL ESTATE",
       buttonLink: "https://www.sophierealestate.eu/",
-      screenshotAspect: "video",
       deviceType: "macbook"
     },
     {
@@ -194,7 +217,6 @@ export default function Portfolio() {
       descriptionText: "I created Watch World Collectors on TikTok as a space for watch enthusiasts to share their passion for timepieces. What started as a simple idea quickly grew into a community of collectors and admirers, reaching 12.7K followers, 6 million views, and over 345K likes, all brought together by a shared appreciation for watches.",
       buttonText: "WATCH WORLD COLLECTORS",
       buttonLink: "https://www.tiktok.com/@watchworldcollectors",
-      screenshotAspect: "phone",
       deviceType: "iphone"
     }
   ];
@@ -228,11 +250,17 @@ export default function Portfolio() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [selectedProduct]);
 
-  // Filter products by category and sort by year (newest first)
-  const filteredProducts = (selectedCategory === 'all'
-    ? [...products]
-    : products.filter(p => p.category === selectedCategory)
-  ).sort((a, b) => parseInt(b.year) - parseInt(a.year));
+  // Filter by category, then by origin for physical work, and sort by year
+  // (newest first). Products flagged `hidden` never reach the site.
+  const filteredProducts = products
+    .filter(p => !p.hidden)
+    .filter(p => selectedCategory === 'all' || p.category === selectedCategory)
+    .filter(p =>
+      selectedCategory !== 'physical' ||
+      selectedOrigin === 'everything' ||
+      p.origin === selectedOrigin
+    )
+    .sort((a, b) => parseInt(b.year) - parseInt(a.year));
 
   // Inquire Page
   if (showInquire) {
@@ -401,8 +429,6 @@ export default function Portfolio() {
     if (selectedProduct.type === "social-media") {
       const scrollToBottom = () => scrollToElement('social-description-section-' + selectedProduct.id);
 
-      const aspectRatio = selectedProduct.screenshotAspect === "square" ? "aspect-square" : selectedProduct.screenshotAspect === "video" ? "aspect-video" : "aspect-[9/16]";
-
       return (
         <div className="min-h-screen bg-paper">
           <nav className="fixed top-0 w-full bg-paper/80 backdrop-blur-md z-50">
@@ -444,26 +470,6 @@ export default function Portfolio() {
               </button>
             )}
           </section>
-
-          {/* Screenshot Section - clickable image, hidden for video aspect (Golden Visa) */}
-          {selectedProduct.screenshotAspect !== "video" && (
-            <section className="bg-paper py-24 px-8 md:px-16 flex items-center justify-center min-h-screen">
-              <div className="max-w-md mx-auto">
-                <button 
-                  onClick={() => window.open(selectedProduct.buttonLink, '_blank')}
-                  className="block hover:opacity-70 transition-opacity duration-700 ease-luxe cursor-pointer"
-                >
-                  <div className={`${aspectRatio} bg-vandyke/5 overflow-hidden`}>
-                    <FadeImage 
-                      src={selectedProduct.profileImage} 
-                      alt="Screenshot"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                </button>
-              </div>
-            </section>
-          )}
 
           {/* Description Section at Bottom */}
           <section id={'social-description-section-' + selectedProduct.id} className="bg-paper pb-24 px-8 md:px-16 flex items-center justify-center min-h-screen">
@@ -680,15 +686,19 @@ export default function Portfolio() {
       {selectedCategory === 'all' ? (
         <div className="h-screen flex items-center justify-center px-8">
           <div className="w-full flex flex-col items-center justify-center gap-10 md:gap-14">
-            <SisyphusIntro play={playIntro} />
+            <SisyphusIntro play={!introSeen} />
 
             <div className="flex flex-row items-center gap-10 md:gap-16">
               {categories.filter(c => c.id !== 'all').map((cat, i) => (
                 <motion.button
                   key={cat.id}
-                  {...reveal(2.4 + i * 0.12)}
-                  onClick={() => setSelectedCategory(cat.id)}
-                  className="text-lg md:text-2xl tracking-[0.15em] font-light hover:opacity-50 transition-opacity duration-700 ease-luxe"
+                  {...reveal(homeDelay + i * 0.12)}
+                  onClick={() => {
+                    leaveHome();
+                    setSelectedOrigin(null);
+                    setSelectedCategory(cat.id);
+                  }}
+                  className="text-2xl tracking-[0.15em] font-light hover:opacity-50 transition-opacity duration-700 ease-luxe"
                 >
                   {cat.shortName}
                 </motion.button>
@@ -697,17 +707,20 @@ export default function Portfolio() {
 
             {/* About button */}
             <motion.button
-              {...reveal(2.64)}
-              onClick={() => setShowAbout(true)}
-              className="text-lg md:text-2xl tracking-[0.15em] font-light hover:opacity-50 transition-opacity duration-700 ease-luxe"
+              {...reveal(homeDelay + 0.24)}
+              onClick={() => {
+                leaveHome();
+                setShowAbout(true);
+              }}
+              className="text-2xl tracking-[0.15em] font-light hover:opacity-50 transition-opacity duration-700 ease-luxe"
             >
               TJ
             </motion.button>
           </div>
         </div>
-      ) : (
+      ) : selectedCategory === 'physical' && !selectedOrigin ? (
         <>
-          {/* Category Page Navigation */}
+          {/* Origin Chooser Navigation */}
           <nav className="fixed top-0 w-full bg-paper/80 backdrop-blur-md z-50">
             <div className="max-w-screen-2xl mx-auto px-8 md:px-16 py-6 flex items-center">
               <button
@@ -719,10 +732,64 @@ export default function Portfolio() {
             </div>
           </nav>
 
+          {/* Origin Chooser — the pair sit apart on desktop and stack on mobile */}
+          <div className="h-screen flex items-center justify-center px-8">
+            <div className="w-full max-w-2xl flex flex-col items-center gap-14 md:gap-20">
+              <div className="w-full flex flex-col md:flex-row items-center md:justify-between gap-14 md:gap-0">
+                {ORIGINS.filter(o => o.id !== 'everything').map((origin, i) => (
+                  <motion.button
+                    key={origin.id}
+                    {...reveal(i * 0.12)}
+                    onClick={() => setSelectedOrigin(origin.id)}
+                    className="text-2xl tracking-[0.15em] font-light hover:opacity-50 transition-opacity duration-700 ease-luxe"
+                  >
+                    {origin.name}
+                  </motion.button>
+                ))}
+              </div>
+
+              {/* The tilt lives on an inner span: Framer Motion writes its own
+                  inline transform on the motion element, which would win. */}
+              <motion.span {...reveal(0.24)} aria-hidden="true">
+                <span className="inline-block -rotate-[25deg] text-base tracking-[0.15em] font-light text-vandyke/50">
+                  OR
+                </span>
+              </motion.span>
+
+              <motion.button
+                {...reveal(0.36)}
+                onClick={() => setSelectedOrigin('everything')}
+                className="text-2xl tracking-[0.15em] font-light hover:opacity-50 transition-opacity duration-700 ease-luxe"
+              >
+                EVERYTHING
+              </motion.button>
+            </div>
+          </div>
+        </>
+      ) : (
+        <>
+          {/* Category Page Navigation */}
+          <nav className="fixed top-0 w-full bg-paper/80 backdrop-blur-md z-50">
+            <div className="max-w-screen-2xl mx-auto px-8 md:px-16 py-6 flex items-center">
+              <button
+                onClick={() =>
+                  selectedCategory === 'physical'
+                    ? setSelectedOrigin(null)
+                    : setSelectedCategory('all')
+                }
+                className="text-xs tracking-[0.2em] font-light hover:opacity-50 transition-opacity duration-700 ease-luxe"
+              >
+                BACK
+              </button>
+            </div>
+          </nav>
+
           {/* Category Header */}
           <motion.div {...reveal()} className="pt-32 pb-12 px-8 md:px-16 text-center">
             <h1 className="text-3xl tracking-[0.15em] font-light">
-              {categories.find(c => c.id === selectedCategory)?.name}
+              {selectedCategory === 'physical'
+                ? ORIGINS.find(o => o.id === selectedOrigin)?.name
+                : categories.find(c => c.id === selectedCategory)?.name}
             </h1>
           </motion.div>
 
@@ -738,7 +805,6 @@ export default function Portfolio() {
                       <motion.div
                         key={product.id}
                         {...reveal(0.15 + i * 0.08)}
-                        data-cursor="VIEW"
                         className="group cursor-pointer"
                         onClick={() => setSelectedProduct(product)}
                       >

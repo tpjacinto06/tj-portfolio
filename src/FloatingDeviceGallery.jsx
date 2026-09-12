@@ -53,7 +53,6 @@ function FloatingDevice({ product, layout, onSelect, scale, index = 0 }) {
       <motion.div
         style={{ y, width: boxWidth, height: boxHeight, position: 'relative', transformOrigin: 'top' }}
         className="cursor-pointer"
-        data-cursor="VIEW"
         onClick={() => onSelect(product)}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
