@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import useMediaQuery from '../lib/useMediaQuery';
 
 const CLICKABLE_SELECTOR = 'button, a, .cursor-pointer';
 const FINE_POINTER_QUERY = '(hover: hover) and (pointer: fine)';
@@ -7,27 +8,27 @@ export default function Cursor() {
   const dotRef = useRef(null);
   const [isHovering, setIsHovering] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const [enabled, setEnabled] = useState(false);
-
-  useEffect(() => {
-    setEnabled(window.matchMedia(FINE_POINTER_QUERY).matches);
-  }, []);
+  const enabled = useMediaQuery(FINE_POINTER_QUERY);
 
   useEffect(() => {
     if (!enabled) return;
 
-    const handleMove = (e) => {
+    // The system cursor is hidden only while this one is mounted (see
+    // index.css), so a failed script never leaves the visitor with no cursor.
+    document.documentElement.classList.add('custom-cursor');
+
+    const handleMove = e => {
       if (dotRef.current) {
         dotRef.current.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%)`;
       }
       setIsVisible(true);
     };
 
-    const handleOver = (e) => {
+    const handleOver = e => {
       if (e.target.closest(CLICKABLE_SELECTOR)) setIsHovering(true);
     };
 
-    const handleOut = (e) => {
+    const handleOut = e => {
       if (e.target.closest(CLICKABLE_SELECTOR)) setIsHovering(false);
     };
 
@@ -45,6 +46,7 @@ export default function Cursor() {
     document.addEventListener('mouseleave', handleLeave);
 
     return () => {
+      document.documentElement.classList.remove('custom-cursor');
       window.removeEventListener('mousemove', handleMove);
       window.removeEventListener('mouseover', handleOver);
       window.removeEventListener('mouseout', handleOut);
@@ -64,7 +66,7 @@ export default function Cursor() {
     <div
       ref={dotRef}
       aria-hidden="true"
-      className={`fixed top-0 left-0 z-[9999] rounded-full pointer-events-none transition-[width,height,background-color] duration-500 ease-luxe ${shape} ${
+      className={`pointer-events-none fixed left-0 top-0 z-[9999] rounded-full transition-[width,height,background-color] duration-500 ease-luxe ${shape} ${
         isVisible ? 'opacity-100' : 'opacity-0'
       }`}
     />

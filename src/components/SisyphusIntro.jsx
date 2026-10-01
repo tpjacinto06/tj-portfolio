@@ -32,8 +32,14 @@ const FOOT_LEN = 6;
 // of swing (lifted, carried forward). Short, crouched strides — a pushing
 // figure cannot take long ones.
 const FOOT_PATH = [
-  [15, 0], [8, 0], [0, 0], [-8, 0],
-  [-15, 0], [-10, -4], [0, -6], [8, -3],
+  [15, 0],
+  [8, 0],
+  [0, 0],
+  [-8, 0],
+  [-15, 0],
+  [-10, -4],
+  [0, -6],
+  [8, -3],
 ];
 const HIP_Y = [-28, -27, -26, -27, -28, -27, -26, -27];
 const STRIDE_UNITS = FOOT_PATH[0][0] - FOOT_PATH[4][0];
@@ -112,38 +118,41 @@ function solveKnee(hip, foot) {
 
 function sample(path, phase) {
   const n = path.length;
-  const f = ((phase % 1) + 1) % 1 * n;
+  const f = (((phase % 1) + 1) % 1) * n;
   const i0 = Math.floor(f) % n;
   const i1 = (i0 + 1) % n;
   const k = f - Math.floor(f);
   const a = path[i0];
   const b = path[i1];
-  return Array.isArray(a)
-    ? [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k]
-    : a + (b - a) * k;
+  return Array.isArray(a) ? [a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k] : a + (b - a) * k;
 }
 
 export default function SisyphusIntro({ play = false }) {
   const boxRef = useRef(null);
   const [width, setWidth] = useState(0);
 
-  const manRef = useRef(null);
-  const ballRef = useRef(null);
-  const r = {
-    thighA: useRef(null), shinA: useRef(null), footA: useRef(null),
-    thighB: useRef(null), shinB: useRef(null), footB: useRef(null),
-    torso: useRef(null), armNear: useRef(null), armFar: useRef(null), head: useRef(null),
-  };
+  // The animation's clock lives outside the drawing effect, which re-runs on
+  // every resize. A resize mid-push re-lays the path for the new width and
+  // carries on from the same moment rather than starting him over.
+  const startRef = useRef(0);
+  const doneRef = useRef(false);
 
   useEffect(() => {
-    const measure = () => setWidth(boxRef.current?.clientWidth ?? 0);
-    measure();
-    window.addEventListener('resize', measure);
-    return () => window.removeEventListener('resize', measure);
+    const box = boxRef.current;
+    if (!box) return;
+    // Fires once on observe, which is the initial measurement.
+    const observer = new ResizeObserver(([entry]) => setWidth(entry.contentRect.width));
+    observer.observe(box);
+    return () => observer.disconnect();
   }, []);
 
   useEffect(() => {
     if (!width) return;
+
+    // Every animated shape is tagged data-part in the markup below and written
+    // to directly, frame by frame, without going through React.
+    const parts = {};
+    for (const el of boxRef.current.querySelectorAll('[data-part]')) parts[el.dataset.part] = el;
 
     const markW = (MARK_RIGHT - MARK_LEFT) * S;
     const travel = Math.max(0, Math.min(width - markW, MAX_TRAVEL));
@@ -162,8 +171,8 @@ export default function SisyphusIntro({ play = false }) {
     const ballLeft = endHipX + BALL_DX * S;
     const ballHome = centreHipX + BALL_DX * S;
 
-    const set = (ref, attrs) => {
-      const el = ref.current;
+    const set = (name, attrs) => {
+      const el = parts[name];
       if (!el) return;
       for (const k in attrs) el.setAttribute(k, attrs[k]);
     };
@@ -174,24 +183,28 @@ export default function SisyphusIntro({ play = false }) {
       const kneeB = solveKnee(hip, footB);
       const lift = hipY - HIP[1];
 
-      set(r.thighA, { x1: hip[0], y1: hip[1], x2: kneeA[0], y2: kneeA[1] });
-      set(r.shinA, { x1: kneeA[0], y1: kneeA[1], x2: footA[0], y2: footA[1] });
-      set(r.footA, { x1: footA[0] - 1, y1: footA[1], x2: footA[0] + FOOT_LEN, y2: footA[1] });
+      set('thighA', { x1: hip[0], y1: hip[1], x2: kneeA[0], y2: kneeA[1] });
+      set('shinA', { x1: kneeA[0], y1: kneeA[1], x2: footA[0], y2: footA[1] });
+      set('footA', { x1: footA[0] - 1, y1: footA[1], x2: footA[0] + FOOT_LEN, y2: footA[1] });
 
-      set(r.thighB, { x1: hip[0], y1: hip[1], x2: kneeB[0], y2: kneeB[1] });
-      set(r.shinB, { x1: kneeB[0], y1: kneeB[1], x2: footB[0], y2: footB[1] });
-      set(r.footB, { x1: footB[0] - 1, y1: footB[1], x2: footB[0] + FOOT_LEN, y2: footB[1] });
+      set('thighB', { x1: hip[0], y1: hip[1], x2: kneeB[0], y2: kneeB[1] });
+      set('shinB', { x1: kneeB[0], y1: kneeB[1], x2: footB[0], y2: footB[1] });
+      set('footB', { x1: footB[0] - 1, y1: footB[1], x2: footB[0] + FOOT_LEN, y2: footB[1] });
 
-      set(r.torso, { x1: hip[0], y1: hip[1], x2: SHOULDER[0], y2: SHOULDER[1] + lift });
-      set(r.armNear, { x1: SHOULDER[0], y1: SHOULDER[1] + lift, x2: HAND[0], y2: HAND[1] + lift });
-      set(r.armFar, { x1: SHOULDER_FAR[0], y1: SHOULDER_FAR[1] + lift, x2: HAND_FAR[0], y2: HAND_FAR[1] + lift });
-      set(r.head, { cx: HEAD[0], cy: HEAD[1] + lift });
+      set('torso', { x1: hip[0], y1: hip[1], x2: SHOULDER[0], y2: SHOULDER[1] + lift });
+      set('armNear', { x1: SHOULDER[0], y1: SHOULDER[1] + lift, x2: HAND[0], y2: HAND[1] + lift });
+      set('armFar', {
+        x1: SHOULDER_FAR[0],
+        y1: SHOULDER_FAR[1] + lift,
+        x2: HAND_FAR[0],
+        y2: HAND_FAR[1] + lift,
+      });
+      set('head', { cx: HEAD[0], cy: HEAD[1] + lift });
     };
 
     const place = (hipX, ballX, opacity) => {
-      manRef.current?.setAttribute('transform', `translate(${hipX} ${GROUND_Y}) scale(${S})`);
-      manRef.current?.setAttribute('opacity', opacity);
-      ballRef.current?.setAttribute('cx', ballX);
+      set('man', { transform: `translate(${hipX} ${GROUND_Y}) scale(${S})`, opacity });
+      set('ball', { cx: ballX });
     };
 
     const drawLogo = () => {
@@ -199,13 +212,19 @@ export default function SisyphusIntro({ play = false }) {
       place(centreHipX, centreHipX + BALL_DX * S, 1);
     };
 
-    if (!play) {
+    if (!play || doneRef.current) {
       drawLogo();
       return;
     }
 
     let raf = 0;
-    let start = 0;
+
+    const finish = () => {
+      cancelAnimationFrame(raf);
+      raf = 0;
+      doneRef.current = true;
+      drawLogo();
+    };
 
     const draw = t => {
       if (t < PUSH_MS) {
@@ -234,69 +253,90 @@ export default function SisyphusIntro({ play = false }) {
     };
 
     const frame = now => {
-      if (!start) start = now;
-      const t = now - start;
-      draw(t);
-      if (t < TOTAL_MS) raf = requestAnimationFrame(frame);
-      else drawLogo();
+      if (!startRef.current) startRef.current = now;
+      const t = now - startRef.current;
+      if (t < TOTAL_MS) {
+        draw(t);
+        raf = requestAnimationFrame(frame);
+      } else {
+        finish();
+      }
     };
 
-    // Paint the opening frame synchronously. Everything else hangs off the
+    // Paint the current frame synchronously. Everything else hangs off the
     // animation-frame loop, and if that first callback is ever delayed — a
     // backgrounded tab, a throttled renderer — the mark would otherwise sit
     // there invisible and unpositioned.
-    draw(0);
+    draw(startRef.current ? Math.min(performance.now() - startRef.current, TOTAL_MS) : 0);
     raf = requestAnimationFrame(frame);
 
-    const skip = () => {
-      cancelAnimationFrame(raf);
-      raf = 0;
-      drawLogo();
-    };
-    window.addEventListener('click', skip);
-    window.addEventListener('keydown', skip);
+    window.addEventListener('click', finish);
+    window.addEventListener('keydown', finish);
 
     return () => {
       cancelAnimationFrame(raf);
-      window.removeEventListener('click', skip);
-      window.removeEventListener('keydown', skip);
+      window.removeEventListener('click', finish);
+      window.removeEventListener('keydown', finish);
     };
   }, [play, width]);
 
   const line = { stroke: 'currentColor', strokeLinecap: 'round', fill: 'none' };
 
   return (
-    <div ref={boxRef} className="relative w-full text-vandyke" style={{ height: HEIGHT }} aria-hidden="true">
+    <div
+      ref={boxRef}
+      className="relative w-full text-vandyke"
+      style={{ height: HEIGHT }}
+      aria-hidden="true"
+    >
       <svg width="100%" height={HEIGHT} viewBox={`0 0 ${width || 1} ${HEIGHT}`}>
         <defs>
           {/* Roughens every edge so the linework reads as drawn rather than
               plotted — the sketch quality of the reference, not its density. */}
           <filter id="tj-sketch" x="-25%" y="-25%" width="150%" height="150%">
-            <feTurbulence type="fractalNoise" baseFrequency="0.055" numOctaves="2" seed="7" result="n" />
-            <feDisplacementMap in="SourceGraphic" in2="n" scale="1.6" xChannelSelector="R" yChannelSelector="G" />
+            <feTurbulence
+              type="fractalNoise"
+              baseFrequency="0.055"
+              numOctaves="2"
+              seed="7"
+              result="n"
+            />
+            <feDisplacementMap
+              in="SourceGraphic"
+              in2="n"
+              scale="1.6"
+              xChannelSelector="R"
+              yChannelSelector="G"
+            />
           </filter>
         </defs>
 
         <g filter="url(#tj-sketch)">
-          <circle ref={ballRef} cx="0" cy={GROUND_Y + BALL_CY * S} r={BALL_R * S} fill="currentColor" />
+          <circle
+            data-part="ball"
+            cx="0"
+            cy={GROUND_Y + BALL_CY * S}
+            r={BALL_R * S}
+            fill="currentColor"
+          />
 
-          <g ref={manRef} opacity="0">
+          <g data-part="man" opacity="0">
             {/* Far side of the body, set back */}
             <g opacity="0.45">
-              <line ref={r.thighA} strokeWidth={THIGH_W} {...line} />
-              <line ref={r.shinA} strokeWidth={SHIN_W} {...line} />
-              <line ref={r.footA} strokeWidth={FOOT_W} {...line} />
-              <line ref={r.armFar} strokeWidth={ARM_W} {...line} />
+              <line data-part="thighA" strokeWidth={THIGH_W} {...line} />
+              <line data-part="shinA" strokeWidth={SHIN_W} {...line} />
+              <line data-part="footA" strokeWidth={FOOT_W} {...line} />
+              <line data-part="armFar" strokeWidth={ARM_W} {...line} />
             </g>
 
-            <line ref={r.torso} strokeWidth={TORSO_W} {...line} />
-            <circle ref={r.head} r={HEAD_R} fill="currentColor" />
+            <line data-part="torso" strokeWidth={TORSO_W} {...line} />
+            <circle data-part="head" r={HEAD_R} fill="currentColor" />
 
             {/* Near side, drawn last so it reads closest to the viewer */}
-            <line ref={r.thighB} strokeWidth={THIGH_W} {...line} />
-            <line ref={r.shinB} strokeWidth={SHIN_W} {...line} />
-            <line ref={r.footB} strokeWidth={FOOT_W} {...line} />
-            <line ref={r.armNear} strokeWidth={ARM_W} {...line} />
+            <line data-part="thighB" strokeWidth={THIGH_W} {...line} />
+            <line data-part="shinB" strokeWidth={SHIN_W} {...line} />
+            <line data-part="footB" strokeWidth={FOOT_W} {...line} />
+            <line data-part="armNear" strokeWidth={ARM_W} {...line} />
           </g>
         </g>
       </svg>

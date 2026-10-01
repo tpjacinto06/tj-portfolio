@@ -1,69 +1,62 @@
-# TJ Portfolio - Deployment Instructions
+# Body of Work
 
-## Quick Deploy to Vercel (5 minutes)
+Tomás Jacinto's portfolio — React, Vite, Tailwind and Framer Motion, deployed on
+Vercel at https://tj-portfolio.vercel.app.
 
-### Step 1: Install Git and Node.js
-1. Download Git: https://git-scm.com/downloads
-2. Download Node.js: https://nodejs.org/ (get LTS version)
-3. Install both
+## Running it
 
-### Step 2: Set Up Your Project
-1. Download ALL these files to a folder called `tj-portfolio`
-2. Open Terminal/Command Prompt
-3. Navigate to the folder:
-   ```
-   cd path/to/tj-portfolio
-   ```
-
-### Step 3: Install Dependencies
 ```bash
 npm install
+npm run dev       # http://localhost:5173
+npm run build     # production build into dist/
+npm run lint      # ESLint, including accessibility checks
+npm run format    # Prettier
 ```
 
-### Step 4: Test Locally (Optional)
-```bash
-npm run dev
+## Pages
+
+| URL                         | Page                                           |
+| --------------------------- | ---------------------------------------------- |
+| `/`                         | Intro animation and the numbered index         |
+| `/physical`                 | Manufactured, conceptualized, or everything    |
+| `/physical/:origin`         | Index of physical projects                     |
+| `/digital`                  | Index of digital projects                      |
+| `/work/:slug`               | A single project                               |
+| `/about`                    | Bio and CV                                     |
+| `/inquire`                  | Contact details (not linked from the site yet) |
+| `/classic/digital`          | Earlier floating-device layout (hidden)        |
+| `/classic/physical/:origin` | Earlier square-card grid (hidden)              |
+| `/lines/digital`            | Hairline picture gallery (hidden)              |
+| `/lines/physical/:origin`   | Hairline picture gallery (hidden)              |
+
+`vercel.json` sends every path to `index.html` so these URLs work when opened
+directly.
+
+## Adding or editing a project
+
+Everything shown lives in [`src/data/projects.js`](src/data/projects.js). Add an
+entry with a unique `slug` (it becomes the URL) and pick a `layout`:
+
+- `stages` — a list of `{ title, text, image }` process stages
+- `collection` — a list of `{ title, image }` items
+- `detail` — a paragraph of `text` and a `link: { label, href }`; digital
+  projects also need a `device` (`iphone` or `macbook`) and a `screen` image
+
+Images are Cloudinary URLs. Paste the plain upload URL — `src/lib/cdn.js` adds
+the resizing and format options. Set `hidden: true` to keep a project out of the
+site without deleting it.
+
+## Layout
+
 ```
-Open http://localhost:5173 in your browser
-
-### Step 5: Deploy to Vercel
-1. Go to https://vercel.com
-2. Sign up with GitHub
-3. Click "Add New Project"
-4. Import your `tj-portfolio` folder
-5. Click "Deploy"
-6. **Done!** Your site is live
-
-## Alternative: Deploy via Vercel CLI
-
-1. Install Vercel CLI:
-   ```bash
-   npm install -g vercel
-   ```
-
-2. In your project folder:
-   ```bash
-   vercel
-   ```
-
-3. Follow the prompts
-4. Done!
-
-## File Structure
+src/
+├── App.jsx            routes and page transitions
+├── main.jsx           entry point
+├── index.css          base styles and the two shared classes (link-fade, label)
+├── data/projects.js   all site content
+├── pages/             one component per route
+├── components/        Page shell, project sections, intro, cursor, gallery
+├── lib/               motion presets, smooth scroll, Cloudinary, navigation
+└── styles/            device frame CSS for the digital gallery
+scripts/make-logo.cjs  regenerates public/logo.png and og-image.png
 ```
-tj-portfolio/
-├── package.json
-├── index.html
-├── vite.config.js
-├── tailwind.config.js
-├── postcss.config.js
-└── src/
-    ├── main.jsx
-    ├── App.jsx
-    └── index.css
-```
-
-## Need Help?
-- Make sure all files are in the right folders
-- Run `npm install` before deploying
-- Check that Node.js and Git are installed

@@ -2,17 +2,33 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+@layer base {
+  /* Barlow Light is the only weight loaded — headings, buttons and links all
+     inherit it, so nothing falls back to a synthesised weight. */
+  body {
+    font-weight: 300;
+    color: theme('colors.vandyke');
+    background-color: theme('colors.paper');
+  }
+
+  /* Keyboard focus only — a hairline in the ink colour, set off the element
+     so it reads as a frame rather than a highlight. */
+  :focus-visible {
+    outline: 1px solid theme('colors.vandyke');
+    outline-offset: 6px;
+  }
 }
 
-body {
-  font-family: 'Space Mono', monospace;
-  font-weight: 400;
-  color: theme('colors.vandyke');
-  background-color: theme('colors.paper');
+@layer components {
+  /* The site's one interaction: anything clickable fades on hover. */
+  .link-fade {
+    @apply transition-opacity duration-700 ease-luxe hover:opacity-50;
+  }
+
+  /* Small spaced capitals — BACK, field labels, years. */
+  .label {
+    @apply text-xs tracking-loose;
+  }
 }
 
 /* Fine-grain film texture over the whole page — barely visible, but it stops
@@ -27,8 +43,8 @@ body::after {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-@media (hover: hover) and (pointer: fine) {
-  * {
-    cursor: none !important;
-  }
+/* Set by Cursor while its replacement dot is mounted. */
+html.custom-cursor,
+html.custom-cursor * {
+  cursor: none !important;
 }

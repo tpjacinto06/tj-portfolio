@@ -55,3 +55,11 @@ export function scrollToTopImmediate() {
   if (lenis) lenis.scrollTo(0, { immediate: true });
   else window.scrollTo(0, 0);
 }
+
+// Scrolls until the element's bottom edge meets the bottom of the viewport.
+export function scrollToElementEnd(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const rect = el.getBoundingClientRect();
+  scrollToY(rect.bottom + window.scrollY - window.innerHeight);
+}

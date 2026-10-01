@@ -7,18 +7,23 @@
  *
  *   node scripts/make-logo.cjs
  */
-const fs = require('fs'), zlib = require('zlib');
+const fs = require('fs'),
+  zlib = require('zlib');
 
 // ---------------------------------------------------------------- geometry --
 // Lifted from the rendered logo: the figure sits under translate(TX,TY)
 // scale(SC), while the boulder is already in page coordinates.
-const TX = 454.2882510959442, TY = 47, SC = 0.62;
-const INK = [0x66, 0x42, 0x28], PAPER = [0xFA, 0xF8, 0xF5];
+const TX = 454.2882510959442,
+  TY = 47,
+  SC = 0.62;
+const INK = [0x66, 0x42, 0x28],
+  PAPER = [0xfa, 0xf8, 0xf5];
 
 const M = (x, y) => [TX + SC * x, TY + SC * y];
 const seg = (x1, y1, x2, y2, w) => {
-  const a = M(x1, y1), b = M(x2, y2);
-  return { k: 'l', x1: a[0], y1: a[1], x2: b[0], y2: b[1], r: SC * w / 2 };
+  const a = M(x1, y1),
+    b = M(x2, y2);
+  return { k: 'l', x1: a[0], y1: a[1], x2: b[0], y2: b[1], r: (SC * w) / 2 };
 };
 const dot = (cx, cy, r) => {
   const c = M(cx, cy);
@@ -55,8 +60,13 @@ const GROUPS = [
 // ------------------------------------------------- SVG feTurbulence (spec) --
 // The reference Perlin generator from the SVG 1.1 filter spec, so the
 // roughness matches what the browser draws rather than merely resembling it.
-const BSize = 0x100, BM = 0xff, PerlinN = 0x1000;
-const RAND_m = 2147483647, RAND_a = 16807, RAND_q = 127773, RAND_r = 2836;
+const BSize = 0x100,
+  BM = 0xff,
+  PerlinN = 0x1000;
+const RAND_m = 2147483647,
+  RAND_a = 16807,
+  RAND_q = 127773,
+  RAND_r = 2836;
 
 function makeNoise(seed) {
   const lat = new Int32Array(BSize + BSize + 2);
@@ -79,7 +89,8 @@ function makeNoise(seed) {
     }
   }
   for (let i = BSize - 1; i > 0; i--) {
-    const k = lat[i], j = rnd() % BSize;
+    const k = lat[i],
+      j = rnd() % BSize;
     lat[i] = lat[j];
     lat[j] = k;
   }
@@ -96,28 +107,44 @@ function makeNoise(seed) {
 
   function noise2(ch, vx, vy) {
     let t = vx + PerlinN;
-    const bx0 = Math.floor(t) & BM, bx1 = (bx0 + 1) & BM;
-    const rx0 = t - Math.floor(t), rx1 = rx0 - 1;
+    const bx0 = Math.floor(t) & BM,
+      bx1 = (bx0 + 1) & BM;
+    const rx0 = t - Math.floor(t),
+      rx1 = rx0 - 1;
     t = vy + PerlinN;
-    const by0 = Math.floor(t) & BM, by1 = (by0 + 1) & BM;
-    const ry0 = t - Math.floor(t), ry1 = ry0 - 1;
-    const i = lat[bx0], j = lat[bx1];
-    const b00 = lat[i + by0], b10 = lat[j + by0], b01 = lat[i + by1], b11 = lat[j + by1];
-    const sx = curve(rx0), sy = curve(ry0);
+    const by0 = Math.floor(t) & BM,
+      by1 = (by0 + 1) & BM;
+    const ry0 = t - Math.floor(t),
+      ry1 = ry0 - 1;
+    const i = lat[bx0],
+      j = lat[bx1];
+    const b00 = lat[i + by0],
+      b10 = lat[j + by0],
+      b01 = lat[i + by1],
+      b11 = lat[j + by1];
+    const sx = curve(rx0),
+      sy = curve(ry0);
     const g = grad[ch];
-    const a = lerp(sx,
+    const a = lerp(
+      sx,
       rx0 * g[b00 * 2] + ry0 * g[b00 * 2 + 1],
-      rx1 * g[b10 * 2] + ry0 * g[b10 * 2 + 1]);
-    const b = lerp(sx,
+      rx1 * g[b10 * 2] + ry0 * g[b10 * 2 + 1],
+    );
+    const b = lerp(
+      sx,
       rx0 * g[b01 * 2] + ry1 * g[b01 * 2 + 1],
-      rx1 * g[b11 * 2] + ry1 * g[b11 * 2 + 1]);
+      rx1 * g[b11 * 2] + ry1 * g[b11 * 2 + 1],
+    );
     return lerp(sy, a, b);
   }
 
   // fractalNoise summed over octaves, mapped from [-1,1] into [0,1] as the
   // filter primitive does before the displacement map reads it.
   return (ch, x, y, freq, octaves) => {
-    let sum = 0, vx = x * freq, vy = y * freq, ratio = 1;
+    let sum = 0,
+      vx = x * freq,
+      vy = y * freq,
+      ratio = 1;
     for (let o = 0; o < octaves; o++) {
       sum += noise2(ch, vx, vy) / ratio;
       vx *= 2;
@@ -129,23 +156,34 @@ function makeNoise(seed) {
 }
 
 // Matches <filter id="tj-sketch"> in SisyphusIntro.jsx exactly.
-const FREQ = 0.055, OCTAVES = 2, SEED = 7, DISPLACE = 1.6;
+const FREQ = 0.055,
+  OCTAVES = 2,
+  SEED = 7,
+  DISPLACE = 1.6;
 const turb = makeNoise(SEED);
 
 // ------------------------------------------------------------------ raster --
 function bounds(s) {
   return s.k === 'c'
     ? [s.cx - s.r, s.cy - s.r, s.cx + s.r, s.cy + s.r]
-    : [Math.min(s.x1, s.x2) - s.r, Math.min(s.y1, s.y2) - s.r,
-       Math.max(s.x1, s.x2) + s.r, Math.max(s.y1, s.y2) + s.r];
+    : [
+        Math.min(s.x1, s.x2) - s.r,
+        Math.min(s.y1, s.y2) - s.r,
+        Math.max(s.x1, s.x2) + s.r,
+        Math.max(s.y1, s.y2) + s.r,
+      ];
 }
 
 let BB = [Infinity, Infinity, -Infinity, -Infinity];
 for (const g of GROUPS) {
   for (const s of g.shapes) {
     const b = bounds(s);
-    BB = [Math.min(BB[0], b[0]), Math.min(BB[1], b[1]),
-          Math.max(BB[2], b[2]), Math.max(BB[3], b[3])];
+    BB = [
+      Math.min(BB[0], b[0]),
+      Math.min(BB[1], b[1]),
+      Math.max(BB[2], b[2]),
+      Math.max(BB[3], b[3]),
+    ];
   }
 }
 // The displacement pushes edges outward, so the mark covers more than its
@@ -154,15 +192,18 @@ BB = [BB[0] - DISPLACE, BB[1] - DISPLACE, BB[2] + DISPLACE, BB[3] + DISPLACE];
 
 function inside(px, py, s) {
   if (s.k === 'c') return Math.hypot(px - s.cx, py - s.cy) <= s.r;
-  const dx = s.x2 - s.x1, dy = s.y2 - s.y1, L2 = dx * dx + dy * dy;
+  const dx = s.x2 - s.x1,
+    dy = s.y2 - s.y1,
+    L2 = dx * dx + dy * dy;
   let t = L2 ? ((px - s.x1) * dx + (py - s.y1) * dy) / L2 : 0;
   t = t < 0 ? 0 : t > 1 ? 1 : t;
   return Math.hypot(px - (s.x1 + t * dx), py - (s.y1 + t * dy)) <= s.r;
 }
 
 function render(W, H, coverage, SS) {
-  const srcW = BB[2] - BB[0], srcH = BB[3] - BB[1];
-  const k = Math.min(W * coverage / srcW, H * coverage / srcH);
+  const srcW = BB[2] - BB[0],
+    srcH = BB[3] - BB[1];
+  const k = Math.min((W * coverage) / srcW, (H * coverage) / srcH);
   const offX = (W - srcW * k) / 2 - BB[0] * k;
   const offY = (H - srcH * k) / 2 - BB[1] * k;
 
@@ -189,7 +230,10 @@ function render(W, H, coverage, SS) {
           for (let gi = 0; gi < GROUPS.length; gi++) {
             // Union within a group: a sample inside any shape counts once.
             for (const s of GROUPS[gi].shapes) {
-              if (inside(fx, fy, s)) { cov[gi] += inv; break; }
+              if (inside(fx, fy, s)) {
+                cov[gi] += inv;
+                break;
+              }
             }
           }
         }
@@ -212,15 +256,15 @@ const CRC = (() => {
   const t = new Int32Array(256);
   for (let n = 0; n < 256; n++) {
     let c = n;
-    for (let j = 0; j < 8; j++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1;
+    for (let j = 0; j < 8; j++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
     t[n] = c;
   }
   return t;
 })();
 const crc32 = buf => {
-  let c = 0xFFFFFFFF;
-  for (const b of buf) c = CRC[(c ^ b) & 0xFF] ^ (c >>> 8);
-  return (c ^ 0xFFFFFFFF) >>> 0;
+  let c = 0xffffffff;
+  for (const b of buf) c = CRC[(c ^ b) & 0xff] ^ (c >>> 8);
+  return (c ^ 0xffffffff) >>> 0;
 };
 function chunk(type, data) {
   const len = Buffer.alloc(4);
@@ -234,12 +278,13 @@ function png(W, H, rgb) {
   const ihdr = Buffer.alloc(13);
   ihdr.writeUInt32BE(W, 0);
   ihdr.writeUInt32BE(H, 4);
-  ihdr[8] = 8;  // bit depth
-  ihdr[9] = 2;  // truecolour
-  const stride = W * 3 + 1, raw = Buffer.alloc(H * stride);
+  ihdr[8] = 8; // bit depth
+  ihdr[9] = 2; // truecolour
+  const stride = W * 3 + 1,
+    raw = Buffer.alloc(H * stride);
   for (let y = 0; y < H; y++) rgb.copy(raw, y * stride + 1, y * W * 3, (y + 1) * W * 3);
   return Buffer.concat([
-    Buffer.from([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]),
+    Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
     chunk('IHDR', ihdr),
     chunk('IDAT', zlib.deflateSync(raw, { level: 9 })),
     chunk('IEND', Buffer.alloc(0)),
@@ -252,6 +297,16 @@ for (const [file, W, H, cov, ss] of [
 ]) {
   const t = Date.now();
   fs.writeFileSync(file, png(W, H, render(W, H, cov, ss)));
-  console.log(file + '  ' + W + 'x' + H + '  ' +
-    Math.round(fs.statSync(file).size / 1024) + ' KB  ' + (Date.now() - t) + 'ms');
+  console.log(
+    file +
+      '  ' +
+      W +
+      'x' +
+      H +
+      '  ' +
+      Math.round(fs.statSync(file).size / 1024) +
+      ' KB  ' +
+      (Date.now() - t) +
+      'ms',
+  );
 }
